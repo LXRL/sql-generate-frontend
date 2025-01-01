@@ -1,6 +1,6 @@
 {
   "name": "my-vue-app",
-  "private": true,TypeScript Vue Plugin
+  "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -12,6 +12,7 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@types/node": "^22.10.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.6.2",
