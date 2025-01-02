@@ -4,6 +4,10 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
         redirect: "/home"
+    },
+    {
+        path: "/home",
+        component: () => import("@/view/home/home.vue")
     }
 ]
 const router = createRouter({
