@@ -4,7 +4,6 @@ import headerApp from '@/components/headerApp.vue';
 <template>
   <div class="App">
     <headerApp class="headerApp" />
-    <router-link to="/generate"></router-link>
     <router-view></router-view>
   </div>
 

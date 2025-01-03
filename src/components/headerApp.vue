@@ -3,15 +3,31 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 
 // navigation 
-const navList = ref<string[]>(['代码生成', '词库大全', '表大全', '字段大全'])
+const navList = ref<{name:string;path:string}[]>([
+    {
+        name:'代码生成',
+        path:'/generate'
+    },
+    {
+        name:'词库大全',
+        path:'/lexicon'
+    },
+    {
+        name:'表大全',
+        path:'/table'
+    },
+    {
+        name:'字段大全',
+        path:'/fields'
+    },
+])
 // active 样式判断
 const navCurrent=ref<number>(0)
 // router.push
-const router=ref(useRouter)
+const router=useRouter()
 const navClick=(path)=>{
     router.push(path)
 }
-
 
 </script>
 
@@ -23,8 +39,8 @@ const navClick=(path)=>{
         </div>
         <div class="navigation">
             <template v-for="(item,index) in navList" :key="index">
-                <div :class="{ active : navCurrent === index }" @click="(navCurrent = index, navClick())">
-                {{ item }}</div>
+                <div :class="{ active : navCurrent === index }" @click="(navCurrent = index, navClick(item.path))">
+                {{ item.name }}</div>
             </template>
         </div>
         <div class="login">
