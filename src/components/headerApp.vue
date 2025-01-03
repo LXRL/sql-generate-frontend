@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 
 // navigation 
 const navList = ref<string[]>(['代码生成', '词库大全', '表大全', '字段大全'])
+// active 样式判断
 const navCurrent=ref<number>(0)
+// router.push
+const router=ref(useRouter)
+const navClick=(path)=>{
+    router.push(path)
+}
+
+
 </script>
 
 <template>
@@ -14,7 +23,7 @@ const navCurrent=ref<number>(0)
         </div>
         <div class="navigation">
             <template v-for="(item,index) in navList" :key="index">
-                <div :class="{ active : navCurrent === index }" @click="navCurrent = index">
+                <div :class="{ active : navCurrent === index }" @click="(navCurrent = index, navClick())">
                 {{ item }}</div>
             </template>
         </div>

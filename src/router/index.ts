@@ -6,8 +6,20 @@ const routes: Array<RouteRecordRaw> = [
         redirect: "/home"
     },
     {
-        path: "/home",
+        path: "/generate",
         component: () => import("@/view/generate/generate.vue")
+    },
+    {
+        path: "/lexicon",
+        component: () => import("@/view/lexicon/lexicon.vue")
+    },
+    {
+        path: "/table",
+        component: () => import("@/view/table/table.vue")
+    },
+    {
+        path: "/fields",
+        component: () => import("@/view/fields/fields.vue")
     }
 ]
 const router = createRouter({
