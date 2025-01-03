@@ -1,8 +1,9 @@
 <script setup lang="ts">
+
 </script>
 <template>
-<div class="home">
-<h2>home Vue</h2>
+<div class="generate">
+<h2>Generate Vue</h2>
 </div>
 </template>
 
