@@ -13,6 +13,7 @@ a,
 
 #app {
     max-width: 1920px;
+    text-align: left;
 }
 
 body {
