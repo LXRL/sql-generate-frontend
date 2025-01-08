@@ -32,11 +32,10 @@ const selectRadio = ref<string>('同屏')
                 </el-col>
             </el-row>
         </div>
-        
+
         <!-- feature -->
         <div class="feature">
-            <!-- 配置 -->
-            <div class="half">
+            <div class="layout">
                 <el-row v-if="selectRadio != '结果'">
                     <el-col :span="selectRadio === '配置' || selectRadio === '结果' ? 24 : 12">
                         <slot name="conditions"></slot>
@@ -54,7 +53,6 @@ const selectRadio = ref<string>('同屏')
                         <slot name="conditions"></slot>
                     </el-col>
                 </el-row>
-
             </div>
         </div>
     </div>
@@ -68,6 +66,9 @@ const selectRadio = ref<string>('同屏')
     box-sizing: border-box;
 
     .title {
+        padding: 16px 0;
+        margin-bottom: 12px;
+
         .select {
             display: flex;
             align-items: center;
@@ -80,10 +81,9 @@ const selectRadio = ref<string>('同屏')
     }
 
     .feature {
-        .half {
+        .layout {
             .el-col {
                 height: 200px;
-                border: 1px solid black;
             }
         }
     }

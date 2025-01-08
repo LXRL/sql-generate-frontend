@@ -44,7 +44,7 @@ const navClick = (path: string) => {
             </template>
         </div>
         <div class="login">
-            <el-button type="primary" plain>登录</el-button>
+            <el-button class="Button" type="primary" plain>登录</el-button>
         </div>
     </div>
 </template>
@@ -87,6 +87,13 @@ const navClick = (path: string) => {
 
     .login {
         margin-left: auto;
+
+        .el-button {
+            width: 60px;
+            color: #1890FF;
+            background-color: white;
+            border: 1px solid #1890FF;
+        }
     }
 }
 </style>
