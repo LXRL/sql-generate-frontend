@@ -1,0 +1,29 @@
+.el-collapse-item__header {
+    padding: 16px !important;
+    background-color: #FAFAFA !important;
+}
+
+.el-collapse-item__content {
+    padding-bottom: 0 !important;
+}
+
+.el-select--large .el-select__wrapper {
+    min-height: 30px !important;
+}
+
+.el-form-item__label-wrap {
+    margin-right: 0 !important;
+}
+
+.el-input__wrapper {
+    align-items: flex-start !important;
+}
+
+.el-dialog header {
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--underline-border-color);
+}
+
+.el-dialog__footer {
+    text-align: left;
+}

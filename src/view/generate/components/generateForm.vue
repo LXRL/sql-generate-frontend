@@ -1,49 +1,26 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { getGenSchema } from '@/service/index';
 
+import type { FormType } from '@/types';
 // Form
-type FormFieldList = {
-    fieldName: string;         // 字段名称
-    fieldType: string;         // 字段类型
-    defaultValue: string;      // 默认值
-    notNull: boolean;          // 是否不能为空
-    comment: string;           // 注释
-    primaryKey: boolean;       // 是否为主键
-    autoIncrement: boolean;    // 是否自增
-    mockType: string;          // 模拟类型
-    mockParams: string;        // 模拟参数
-    onUpdate: string;          // 更新时的操作
-};
+const props = defineProps<{
+    form: FormType;
+}>();
 
-type FormType = {
-    dbName: string;            // 数据库名称
-    tableName: string;         // 表名称
-    tableComment: string;      // 表注释
-    mockNum: number;           // 模拟数量
-    fieldList: FormFieldList[];// 字段列表，包含多个 FormFieldList 对象
-};
-
-const form: FormType = reactive({
-    dbName: '',
-    tableName: '',
-    tableComment: '',
-    mockNum: 0,
-    fieldList: [] as FormFieldList[] // 初始化为一个空数组
-})
 // formFielDList 表单列表内容
 const activeNames = ref(['1'])
 const fieldListOptions = ref(["随机", "递增", "规则", "词库", "不模拟"])
 // 删除列表
 const fieldListDelete = (index: number) => {
-    form.fieldList.splice(index, 1)
+    props.form.fieldList.splice(index, 1)
 }
 // 根据选中的 mockType 返回对应的标签
 const fieldTypeLabel = (mockType: string) => {
     switch (mockType) {
         case '随机':
             return '随机规则:';
-        case '自增':
+        case '递增':
             return '起始值:';
         case '规则':
             return '规则:';
@@ -57,7 +34,7 @@ const fieldTypeLabel = (mockType: string) => {
 const random = ref(['字符串', '整数', '小数', '日期', '时间戳', '网址', 'IP', '邮箱', '手机号', '人名', '城市', '大学'])
 // newClick 新增字段
 const newClick = () => {
-    form.fieldList.push({
+    props.form.fieldList.push({
         fieldName: 'username',
         fieldType: 'varchar(256)',
         defaultValue: '',
@@ -70,9 +47,10 @@ const newClick = () => {
         onUpdate: ''
     });
 }
+
 // universalClick 新增通用字段
 const universalClick = () => {
-    form.fieldList.push(
+    props.form.fieldList.push(
         {
             fieldName: 'id',
             fieldType: 'bigint',
@@ -123,17 +101,15 @@ const universalClick = () => {
         },
     );
 }
-
 // submit 提交
 const onSubmit = async () => {
     try {
-        const response = await getGenSchema(form)
+        const response = await getGenSchema(props.form)
         console.log(response)
     } catch (error) {
         console.error('获取用户时出错:', error);
     }
 }
-
 </script>
 <template>
     <div class="Form">
