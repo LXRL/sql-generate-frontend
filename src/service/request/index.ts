@@ -1,5 +1,5 @@
-// src/request/hyRequest.ts
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from "axios"
 import { BASE_URL, TIMEOUT } from "./config";
 
 class HYRequest {

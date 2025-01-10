@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
+import { getGenSchema } from '@/service/index';
 
 // Form
 type FormFieldList = {
@@ -30,21 +31,6 @@ const form: FormType = reactive({
     mockNum: 0,
     fieldList: [] as FormFieldList[] // 初始化为一个空数组
 })
-
-//示例：添加字段到 fieldList
-form.fieldList.push({
-    fieldName: 'id',
-    fieldType: 'number',
-    defaultValue: '0',
-    notNull: true,
-    comment: '主键ID',
-    primaryKey: true,
-    autoIncrement: true,
-    mockType: '随机',
-    mockParams: '',
-    onUpdate: 'CURRENT_TIMESTAMP'
-});
-
 // formFielDList 表单列表内容
 const activeNames = ref(['1'])
 const fieldListOptions = ref(["随机", "递增", "规则", "词库", "不模拟"])
@@ -136,6 +122,16 @@ const universalClick = () => {
             onUpdate: ''
         },
     );
+}
+
+// submit 提交
+const onSubmit = async () => {
+    try {
+        const response = await getGenSchema(form)
+        console.log(response)
+    } catch (error) {
+        console.error('获取用户时出错:', error);
+    }
 }
 
 </script>
