@@ -250,8 +250,10 @@ const universalClick = () => {
 
             <!-- submit -->
             <el-form-item>
-                <el-button type="primary" @click="onSubmit">Create</el-button>
-                <el-button>Cancel</el-button>
+                <el-button type="primary" @click="onSubmit" style="width: 200px;">一键生成</el-button>
+                <el-button>保存表</el-button>
+                <el-button>复制配置</el-button>
+                <el-button>重置</el-button>
             </el-form-item>
         </el-form>
     </div>
