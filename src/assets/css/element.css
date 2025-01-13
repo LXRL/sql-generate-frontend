@@ -25,5 +25,23 @@
 }
 
 .el-dialog__footer {
-    text-align: left;
+    text-align: left !important;
+}
+
+.el-drawer {
+    width: 921px !important;
+}
+
+.el-drawer__body>* {
+    border: 1px solid var(--underline-border-color);
+}
+
+.el-drawer .el-input__wrapper {
+    padding: 6px;
+    border-radius: 0;
+}
+
+.el-form-item__content .el-textarea__inner {
+    min-height: none !important;
+    height: 361px !important;
 }

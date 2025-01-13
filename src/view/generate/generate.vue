@@ -4,6 +4,7 @@ import infoAll from '@/components/infoAll.vue';
 import generateForm from './components/generateForm.vue';
 import type { FormFieldList, FormType } from '@/types';
 import { getGenAuto } from '@/service';
+import { getUploadExcelFile } from '@/service'
 // Form
 const form: FormType = reactive({
     dbName: 'library',
@@ -16,15 +17,60 @@ const form: FormType = reactive({
 // brainPower 智能导入
 const content = ref<string>('')
 const brainPowerShow = ref<boolean>(false)
-const setBrain = () => content.value = 'id，用户名，创建时间，更新时间，is_deleted'
+const setBrain = () => content.value = "id,用户名,创建时间,更新时间,is_deleted"
 const onSubmit = async () => {
     try {
         const response = await getGenAuto(content.value)
         console.log(response)
     } catch (error) {
-        console.error('获取用户时出错：', error);
+        console.log('获取用户时出错：', error);
     }
 }
+
+// tableShow 导入表
+const tableShow = ref<boolean>(false)
+// search 搜索框
+const search = ref<string>("")
+
+// disposition 导入配置
+const disposition = ref()
+const dispositionShow = ref<boolean>(false)
+const setDisposition = () => {
+    const exampleConfig = { "dbName": "shut_db", "tableName": "user", "tableComment": "用户表", "mockNum": 10, "fieldList": [{ "fieldName": "id", "fieldType": "bigint", "defaultValue": null, "notNull": true, "comment": "id", "primaryKey": true, "autoIncrement": true, "mockType": "递增", "mockParams": 0, "onUpdate": null }, { "fieldName": "username", "fieldType": "varchar(256)", "defaultValue": null, "notNull": true, "comment": "用户名", "primaryKey": false, "autoIncrement": false, "mockType": "随机", "mockParams": "人名", "onUpdate": null }, { "fieldName": "create_time", "fieldType": "datetime", "defaultValue": "CURRENT_TIMESTAMP", "notNull": true, "comment": "创建时间", "primaryKey": false, "autoIncrement": false, "mockType": "随机", "mockParams": "日期", "onUpdate": null }, { "fieldName": "update_time", "fieldType": "datetime", "defaultValue": "CURRENT_TIMESTAMP", "notNull": true, "comment": "更新时间", "primaryKey": false, "autoIncrement": false, "mockType": "随机", "mockParams": "日期", "onUpdate": "CURRENT_TIMESTAMP" }, { "fieldName": "is_deleted", "fieldType": "tinyint", "defaultValue": "0", "notNull": true, "comment": "是否删除(0-未删, 1-已删)", "primaryKey": false, "autoIncrement": false, "mockType": "固定", "mockParams": "0", "onUpdate": null }] }
+    disposition.value = JSON.stringify(exampleConfig, null, 2);
+    console.log(disposition.value);
+}
+const getDisposition = () => {
+    const parsedDisposition = JSON.parse(disposition.value);
+    form.dbName = parsedDisposition.dbName;
+    form.tableName = parsedDisposition.tableName;
+    form.tableComment = parsedDisposition.tableComment;
+    form.mockNum = parsedDisposition.mockNum;
+    form.fieldList = parsedDisposition.fieldList;
+    dispositionShow.value = false
+}
+
+// excel 导入Excel
+const fileInput = ref<HTMLInputElement | null>(null);
+const onFileChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        getUploadExcelFile(target.files[0]).then(response => {
+            console.log('上传成功:', response.data)
+            form.dbName = response.data.data.dbName;
+            form.tableName = response.data.data.tableName;
+            form.tableComment = response.data.data.tableComment;
+            form.mockNum = response.data.data.mockNum;
+            form.fieldList = response.data.data.fieldList;
+        }).catch(error => {
+            console.log('上传失败', error)
+        })
+    }
+}
+const uploadFile = () => {
+    fileInput.value?.click();  // 触发文件选择对话框
+};
+
 </script>
 
 <template>
@@ -48,15 +94,19 @@ const onSubmit = async () => {
                         <div class="into">
                             <button class="brainPower Button" style="border: 1px solid #1890FF;color: #1890FF;"
                                 @click="brainPowerShow = true">智能导入</button>
-                            <button class="table Button">导入表</button>
-                            <button class="disposition Button">导入配置</button>
+                            <button class="table Button" @click="tableShow = true">导入表</button>
+                            <button class="disposition Button" @click="dispositionShow = true">导入配置</button>
                             <button class="tableSQL Button">导入建表SQL</button>
-                            <button class="Excel Button">导入Excel</button>
+                            <div>
+                                <input type="file" @change="onFileChange" ref="fileInput" style="display: none;" />
+                                <button class="Excel Button" @click="uploadFile">导入Excel</button>
+                            </div>
                         </div>
                         <!-- from -->
                         <generateForm :form="form" />
                     </div>
-                    <!-- el-dialog 弹出框 -->
+
+                    <!--智能导入 弹出框 -->
                     <el-dialog v-model="brainPowerShow" title="智能导入" width="520" style="padding: 24px;">
                         <div class="header">请输入表的列名，多个列以【英文或中文逗号】分隔：<button class="Button"
                                 @click="setBrain">导入示例</button></div>
@@ -68,10 +118,41 @@ const onSubmit = async () => {
                         </el-form>
                         <template #footer>
                             <div class="dialog-footer">
-                                <el-button type="primary" @click="onSubmit()">
-                                    导入
-                                </el-button>
+                                <el-button type="primary" @click="onSubmit()">导入</el-button>
                                 <el-button @click="content = ''">重置</el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
+
+                    <!-- 导入表 -->
+                    <el-drawer v-model="tableShow" title="导入表">
+                        <div class="header">
+                            <p>表信息列表</p>
+                            <button>创建表</button>
+                        </div>
+                        <div class="search">
+                            <el-input v-model="search" style="width: 200px;" placeholder="请输入名称" />
+                            <button>搜索</button>
+                        </div>
+                        <div class="info">
+
+                        </div>
+                    </el-drawer>
+
+                    <!-- 导入配置 -->
+                    <el-dialog v-model="dispositionShow" title="导入配置" width="520" style="padding: 24px;">
+                        <div class="header">请输入表结构JSON：<button class="Button" @click="setDisposition">导入示例</button>
+                        </div>
+                        <el-form>
+                            <el-form-item>
+                                <el-input v-model="disposition" style="height: 361px;" autocomplete="off"
+                                    placeholder="请输入配置JSON，可以从表单输入处复制" type="textarea" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button type="primary" @click="getDisposition()">导入</el-button>
+                                <el-button @click="disposition = ''">重置</el-button>
                             </div>
                         </template>
                     </el-dialog>
@@ -98,6 +179,8 @@ const onSubmit = async () => {
             background-color: white;
 
             .into {
+                display: flex;
+
                 button {
                     color: #333;
                     background-color: white;
@@ -122,7 +205,32 @@ const onSubmit = async () => {
                     border: 1px solid var(--underline-border-color);
                 }
             }
+        }
 
+        .el-drawer {
+            .header {
+                display: flex;
+                padding: 10px 24px;
+                align-items: center;
+                border-bottom: 1px solid var(--underline-border-color);
+
+                button {
+                    margin-left: auto;
+                    background-color: #1890FF;
+                    color: white;
+                }
+            }
+
+            .search {
+                display: flex;
+                padding: 10px 24px;
+                align-items: center;
+
+                button {
+                    background-color: #1890FF;
+                    color: white;
+                }
+            }
         }
     }
 }

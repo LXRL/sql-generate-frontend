@@ -6,9 +6,21 @@ export function getGenSchema(params: any) {
         data: params
     })
 }
-export function getGenAuto(params: any) {
+export function getGenAuto(params: string) {
     return hyRequest.post({
         url: 'sql/get/schema/auto',
-        data: params
+        data: { content: params }
+    })
+}
+export function getUploadExcelFile(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return hyRequest.post({
+        url: 'sql/get/schema/excel',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     })
 }

@@ -110,6 +110,15 @@ const onSubmit = async () => {
         console.error('获取用户时出错:', error);
     }
 }
+
+//  重置 
+const resetClick = () => {
+    props.form.dbName = 'library';
+    props.form.tableName = 'test_table';
+    props.form.tableComment = '';
+    props.form.mockNum = 10;
+    props.form.fieldList = []; // 重置为一个空数组
+}
 </script>
 <template>
     <div class="Form">
@@ -225,7 +234,7 @@ const onSubmit = async () => {
                 <el-button type="primary" @click="onSubmit" style="width: 200px;">一键生成</el-button>
                 <el-button>保存表</el-button>
                 <el-button>复制配置</el-button>
-                <el-button>重置</el-button>
+                <el-button @click="resetClick()">重置</el-button>
             </el-form-item>
         </el-form>
     </div>
