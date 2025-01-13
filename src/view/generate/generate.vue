@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 import infoAll from '@/components/infoAll.vue';
+import { useFormStore } from '@/store//modules/formStore';
 import generateForm from './components/generateForm.vue';
-import type { FormFieldList, FormType } from '@/types';
+
 import { getGenAuto } from '@/service';
 import { getUploadExcelFile } from '@/service'
 // Form
-const form: FormType = reactive({
-    dbName: 'library',
-    tableName: 'test_table',
-    tableComment: '',
-    mockNum: 10,
-    fieldList: [] as FormFieldList[] // 初始化为一个空数组
-})
+const formStore = useFormStore();
+const form = formStore.form
+
 
 // brainPower 智能导入
 const content = ref<string>('')
@@ -103,7 +100,7 @@ const uploadFile = () => {
                             </div>
                         </div>
                         <!-- from -->
-                        <generateForm :form="form" />
+                        <generateForm />
                     </div>
 
                     <!--智能导入 弹出框 -->

@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { getGenSchema } from '@/service/index';
+import { useFormStore } from '@/store/modules/formStore';
 
-import type { FormType } from '@/types';
 // Form
-const props = defineProps<{
-    form: FormType;
-}>();
+const formStore = useFormStore();
+const form = formStore.form
 
 // formFielDList 表单列表内容
 const activeNames = ref(['1'])
 const fieldListOptions = ref(["随机", "递增", "规则", "词库", "不模拟"])
 // 删除列表
 const fieldListDelete = (index: number) => {
-    props.form.fieldList.splice(index, 1)
+    form.fieldList.splice(index, 1)
 }
 // 根据选中的 mockType 返回对应的标签
 const fieldTypeLabel = (mockType: string) => {
@@ -34,7 +33,7 @@ const fieldTypeLabel = (mockType: string) => {
 const random = ref(['字符串', '整数', '小数', '日期', '时间戳', '网址', 'IP', '邮箱', '手机号', '人名', '城市', '大学'])
 // newClick 新增字段
 const newClick = () => {
-    props.form.fieldList.push({
+    form.fieldList.push({
         fieldName: 'username',
         fieldType: 'varchar(256)',
         defaultValue: '',
@@ -50,7 +49,7 @@ const newClick = () => {
 
 // universalClick 新增通用字段
 const universalClick = () => {
-    props.form.fieldList.push(
+    form.fieldList.push(
         {
             fieldName: 'id',
             fieldType: 'bigint',
@@ -104,7 +103,7 @@ const universalClick = () => {
 // submit 提交
 const onSubmit = async () => {
     try {
-        const response = await getGenSchema(props.form)
+        const response = await getGenSchema(form)
         console.log(response)
     } catch (error) {
         console.error('获取用户时出错:', error);
@@ -113,11 +112,11 @@ const onSubmit = async () => {
 
 //  重置 
 const resetClick = () => {
-    props.form.dbName = 'library';
-    props.form.tableName = 'test_table';
-    props.form.tableComment = '';
-    props.form.mockNum = 10;
-    props.form.fieldList = []; // 重置为一个空数组
+    form.dbName = 'library';
+    form.tableName = 'test_table';
+    form.tableComment = '';
+    form.mockNum = 10;
+    form.fieldList = []; // 重置为一个空数组
 }
 </script>
 <template>
