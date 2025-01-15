@@ -62,6 +62,7 @@ const selectRadio = ref<string>('同屏')
 <style lang="less" scoped>
 .info {
     width: 100%;
+    height: 100vh;
     padding: 16px 40px;
     box-sizing: border-box;
 
@@ -82,8 +83,14 @@ const selectRadio = ref<string>('同屏')
 
     .feature {
         .layout {
+
             .el-col {
-                height: 200px;
+                margin-bottom: 16px;
+
+            }
+
+            .el-col:nth-child(1) {
+                padding-right: 10px;
             }
         }
     }

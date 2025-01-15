@@ -7,7 +7,11 @@ import router from './router/index'
 import "assets/css/index.css"
 // 配置 Pinia
 import pinia from './store/index'
-
+// 配置 type
 import "@/types/index"
+// 配置 codemirror 编译器
+import VueCodemirror from "vue-codemirror";
+import "@codemirror/theme-one-dark"
 
-createApp(App).use(router).use(pinia).mount('#app')
+
+createApp(App).use(router).use(pinia).use(VueCodemirror).mount('#app')

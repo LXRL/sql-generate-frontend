@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { getGenSchema } from '@/service/index';
 import { useFormStore } from '@/store/modules/formStore';
+import { useFormDataStore } from '@/store/modules/formData';
 
 // Form
 const formStore = useFormStore();
@@ -101,10 +102,14 @@ const universalClick = () => {
     );
 }
 // submit 提交
+const formDataStore = useFormDataStore()
 const onSubmit = async () => {
     try {
         const response = await getGenSchema(form)
         console.log(response)
+        formDataStore.formData = response.data
+        console.log("formDataStore:", formDataStore.formData)
+        console.log("javaEntityCode:", formDataStore.formData.data.javaEntityCode)
     } catch (error) {
         console.error('获取用户时出错:', error);
     }

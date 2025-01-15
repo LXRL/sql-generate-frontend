@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import infoAll from '@/components/infoAll.vue';
-import { useFormStore } from '@/store//modules/formStore';
+import { useFormStore } from '@/store/modules/formStore';
 import generateForm from './components/generateForm.vue';
-
 import { getGenAuto } from '@/service';
 import { getUploadExcelFile } from '@/service'
+import generateResult from './components/generateResult.vue';
 // Form
 const formStore = useFormStore();
 const form = formStore.form
@@ -154,6 +154,10 @@ const uploadFile = () => {
                         </template>
                     </el-dialog>
                 </div>
+            </template>
+
+            <template v-slot:result>
+                <generateResult />
             </template>
         </infoAll>
     </div>
