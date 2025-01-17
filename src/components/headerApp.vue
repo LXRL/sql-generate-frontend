@@ -23,12 +23,15 @@ const navList = ref<{ name: string; path: string }[]>([
 ])
 // active 样式判断
 const navCurrent = ref<number>(0)
-// router.push
+// router.push 切换页面
 const router = useRouter()
 const navClick = (path: string) => {
     router.push(path)
 }
-
+// login 跳转登录页面
+const loginTo = () => {
+    router.push('/login')
+}
 </script>
 
 <template>
@@ -44,7 +47,7 @@ const navClick = (path: string) => {
             </template>
         </div>
         <div class="login">
-            <el-button class="Button" type="primary" plain>登录</el-button>
+            <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
         </div>
     </div>
 </template>

@@ -34,9 +34,13 @@ declare module 'vue' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
+    ElUtton: typeof import('element-plus/es')['ElUtton']
     HeaderApp: typeof import('./src/components/headerApp.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     InfoAll: typeof import('./src/components/infoAll.vue')['default']
+    InfoLe: typeof import('./src/components/infoLe.vue')['default']
+    InfoLeft: typeof import('./src/components/infoLeft.vue')['default']
+    InfoRight: typeof import('./src/components/infoRight.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

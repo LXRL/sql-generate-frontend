@@ -6,6 +6,20 @@ const routes: Array<RouteRecordRaw> = [
         redirect: "/generate"
     },
     {
+        path: "/login",
+        component: () => import("@/view/login/login.vue"),
+        meta: {
+            hideTabBar: true
+        }
+    },
+    {
+        path: "/sign",
+        component: () => import("@/view/login/sign.vue"),
+        meta: {
+            hideTabBar: true
+        }
+    },
+    {
         path: "/generate",
         component: () => import("@/view/generate/generate.vue")
     },

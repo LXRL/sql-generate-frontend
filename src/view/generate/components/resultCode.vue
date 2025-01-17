@@ -15,6 +15,10 @@ const props = defineProps({
     }
 });
 
+// 折叠面板
+const activeNames = ref(['1', '2'])
+
+//  获取 formDataStore 数据
 const formDataStore = useFormDataStore()
 const codeText = ref('');
 const codeTextSql = ref('')
@@ -22,7 +26,7 @@ const codeDataList = ref([])
 watch(
     () => formDataStore.formData,
     (newFormData) => {
-        codeText.value = newFormData?.data?.[props.language] || ''; // 更新 codeText
+        codeText.value = newFormData?.data?.[props.language] || '';
         codeTextSql.value = newFormData?.data?.createSql || '';
         codeDataList.value = newFormData?.data?.dataList || [];
     },
@@ -48,9 +52,9 @@ const copyToClipboard = async (data) => {
 };
 
 // 分页
+const keys = computed(() => Object.keys(codeDataList.value[0] || {}));
 const currentPage = ref(1);
 const pageSize = ref(9);
-const keys = computed(() => Object.keys(codeDataList.value[0] || {}));
 const totalRecords = computed(() => codeDataList.value.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
@@ -68,22 +72,22 @@ const handlePageChange = (newPage) => {
         <button class="button">复制全部</button>
         <div class="demo-collapse">
             <template v-if="name != '模拟数据'">
-                <el-collapse accordion>
+                <el-collapse v-model="activeNames">
+
+                    <!-- 如果是SQL代码就要多一个折叠面板 -->
                     <template v-if="language === 'insertSql'">
-                        <el-collapse accordion>
-                            <el-collapse-item name="2">
-                                <template #title>
-                                    <div class="collText"> 建表语句 <button class="collButton"
-                                            @click="copyToClipboard(codeTextSql)">复制</button>
-                                    </div>
-                                </template>
-                                <div class="collInfo">
-                                    <codemirror v-model="codeTextSql" :options="editorOptions" :autofocus="true"
-                                        :indent-with-tab="true" :tab-size="2" :extensions="extensions"
-                                        style="padding: 16px 16px 24px; height: 300px;" />
+                        <el-collapse-item name="2">
+                            <template #title>
+                                <div class="collText"> 建表语句 <button class="collButton"
+                                        @click="copyToClipboard(codeTextSql)">复制</button>
                                 </div>
-                            </el-collapse-item>
-                        </el-collapse>
+                            </template>
+                            <div class="collInfo">
+                                <codemirror v-model="codeTextSql" :options="editorOptions" :autofocus="true"
+                                    :indent-with-tab="true" :tab-size="2" :extensions="extensions"
+                                    style="padding: 16px 16px 24px; height: 300px;" />
+                            </div>
+                        </el-collapse-item>
                     </template>
 
                     <el-collapse-item name="1">
@@ -98,8 +102,11 @@ const handlePageChange = (newPage) => {
                                 style="padding: 16px; height: 400px;" />
                         </div>
                     </el-collapse-item>
+
                 </el-collapse>
             </template>
+
+            <!-- 模拟数据 -->
             <template v-else>
                 <div class="example-pagination-block">
                     <div class="example-demonstration">
