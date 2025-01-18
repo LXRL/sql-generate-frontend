@@ -32,6 +32,14 @@ const navClick = (path: string) => {
 const loginTo = () => {
     router.push('/login')
 }
+
+// 登录状态
+const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+const userName = ref('')
+if (isLoggedIn) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    userName.value = user.userAccount.charAt(0).toUpperCase() || '用户'
+}
 </script>
 
 <template>
@@ -47,7 +55,14 @@ const loginTo = () => {
             </template>
         </div>
         <div class="login">
-            <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
+            <template v-if="isLoggedIn">
+                <div class="name">
+                    {{ userName }}
+                </div>
+            </template>
+            <template v-else>
+                <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
+            </template>
         </div>
     </div>
 </template>
@@ -90,6 +105,14 @@ const loginTo = () => {
 
     .login {
         margin-left: auto;
+
+        div {
+            padding: 5px 10px;
+            font-size: 12px;
+            color: white;
+            background-color: #CCCCCC;
+            border-radius: 50%;
+        }
 
         .el-button {
             width: 60px;

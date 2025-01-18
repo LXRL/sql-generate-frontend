@@ -41,6 +41,7 @@ declare module 'vue' {
     InfoLe: typeof import('./src/components/infoLe.vue')['default']
     InfoLeft: typeof import('./src/components/infoLeft.vue')['default']
     InfoRight: typeof import('./src/components/infoRight.vue')['default']
+    Result: typeof import('./src/components/result.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

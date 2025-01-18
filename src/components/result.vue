@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { useFormDataStore } from '@/store/modules/formData';
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark';
 
@@ -12,6 +11,10 @@ const props = defineProps({
     name: {
         type: String,
         default: ""
+    },
+    tableData: {
+        type: Object,
+        default: () => { }
     }
 });
 
@@ -19,16 +22,16 @@ const props = defineProps({
 const activeNames = ref(['1', '2'])
 
 //  获取 formDataStore 数据
-const formDataStore = useFormDataStore()
 const codeText = ref('');
 const codeTextSql = ref('')
 const codeDataList = ref([])
 watch(
-    () => formDataStore.formData,
+    () => props.tableData.data,
     (newFormData) => {
         codeText.value = newFormData?.data?.[props.language] || '';
         codeTextSql.value = newFormData?.data?.createSql || '';
         codeDataList.value = newFormData?.data?.dataList || [];
+        console.log("coderText", codeText.value)
     },
     { immediate: true } // 立即执行以确保初始加载时也能获取数据
 );
@@ -89,7 +92,7 @@ const handlePageChange = (newPage) => {
                             </div>
                         </el-collapse-item>
                     </template>
-                    
+
                     <el-collapse-item name="1">
                         <template #title>
                             <div class="collText"> {{ name }} <button class="collButton"

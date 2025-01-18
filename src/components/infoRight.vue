@@ -8,10 +8,10 @@ const props = defineProps({
         type: String,
         default: ''
     }
+
 })
 
 const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-console.log(isLoggedIn)
 </script>
 <template>
     <div class="right">

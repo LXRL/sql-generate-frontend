@@ -132,7 +132,6 @@ const uploadFile = () => {
                             <button>搜索</button>
                         </div>
                         <div class="info">
-
                         </div>
                     </el-drawer>
 

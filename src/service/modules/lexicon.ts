@@ -5,3 +5,10 @@ export function getLexPage() {
         url: 'dict/list/page',
     })
 }
+
+export function getLexSql(params) {
+    return hyRequest.post({
+        url: 'dict/generate/sql',
+        data: params
+    })
+}
