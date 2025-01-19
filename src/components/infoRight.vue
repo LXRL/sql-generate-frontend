@@ -1,46 +1,26 @@
 <script setup lang="ts">
-const props = defineProps({
-    name: {
-        type: String,
-        default: ''
-    },
-    butName: {
-        type: String,
-        default: ''
-    }
-
-})
-
-const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 </script>
+
 <template>
     <div class="right">
         <div class="header">
-            <p>{{ name }}</p>
-            <button class="Button">{{ butName }}</button>
+            <slot name="heInfo"></slot>
         </div>
         <div class="info">
-            <template v-if="isLoggedIn">
-                <h1>已经登录</h1>
-            </template>
-            <template v-else>
-                <button>请先登录</button>
-            </template>
+            <div class="search">
+                <slot name="seInfo"></slot>
+            </div>
+            <div class="data">
+                <slot name="daInfo"></slot>
+            </div>
         </div>
+        <slot name="drInfo"></slot>
     </div>
 </template>
-
-
 <style lang="less" scoped>
 .right {
     background-color: white;
     border: 1px solid var(--underline-border-color);
-
-    .Button {
-        padding: 5px 10px;
-        color: white;
-        background-color: #1890FF;
-    }
 
     .header {
         display: flex;
@@ -53,7 +33,23 @@ const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     }
 
     .info {
+        display: flex;
+        flex-direction: column;
         padding: 24px;
+
+        .search {
+            display: flex;
+
+            .el-input {
+                width: 200px;
+            }
+        }
+
+        .data {
+            width: 100%;
+            margin: 16px 0;
+        }
     }
+
 }
 </style>

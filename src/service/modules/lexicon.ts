@@ -12,3 +12,9 @@ export function getLexSql(params) {
         data: params
     })
 }
+
+export function getMyLexPage() {
+    return hyRequest.get({
+        url: 'dict/my/add/list/page',
+    })
+}

@@ -52,11 +52,3 @@ button {
     border-radius: 0;
     padding: 10px 16px;
 }
-
-button:focus {
-    outline: none;
-}
-
-button:hover {
-    border: none;
-}
