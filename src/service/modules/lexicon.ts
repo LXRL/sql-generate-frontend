@@ -15,6 +15,6 @@ export function getLexSql(params) {
 
 export function getMyLexPage() {
     return hyRequest.get({
-        url: 'dict/my/add/list/page',
+        url: 'dict/my/list/page',
     })
 }

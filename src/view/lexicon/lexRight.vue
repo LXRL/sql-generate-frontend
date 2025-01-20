@@ -7,17 +7,17 @@ import useFormList from '@/store/modules/formList';
 import resultCode from './lexResult.vue'
 
 const formListStore = useFormList()
-const { formPage } = storeToRefs(formListStore)
-formListStore.fetchGetLexPage()
-
+const { MyFormPage } = storeToRefs(formListStore)
+formListStore.fetchGetMyLexPage()
+console.log(MyFormPage)
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => formPage?.value.data?.records?.length);
+const totalRecords = computed(() => MyFormPage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return formPage?.value.data?.records.slice(start, end);
+    return MyFormPage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理

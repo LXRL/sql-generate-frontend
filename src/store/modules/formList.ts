@@ -2,6 +2,9 @@ import { defineStore } from 'pinia';
 import { getLexPage } from '@/service/modules/lexicon'
 import { getTabPage } from '@/service/modules/table';
 import { getFiePage } from '@/service/modules/fields';
+
+import { getMyLexPage } from '@/service/modules/lexicon';
+
 const useFormList = defineStore("formList", {
     state: () => ({
         // 公开
@@ -10,9 +13,10 @@ const useFormList = defineStore("formList", {
         fieldsPage: [],
 
         // 个人
-        MyformPage:[]
+        MyFormPage: []
     }),
     actions: {
+        // 公开
         async fetchGetLexPage() {
             const res = await getLexPage()
             this.formPage = res.data
@@ -24,7 +28,13 @@ const useFormList = defineStore("formList", {
         async fetchGetFiePage() {
             const res = await getFiePage()
             this.fieldsPage = res.data
-        }
+        },
+
+        // 个人
+        async fetchGetMyLexPage() {
+            const res = await getMyLexPage()
+            this.MyFormPage = res.data
+        },
     }
 })
 
