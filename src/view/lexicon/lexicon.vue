@@ -182,8 +182,16 @@ const getSql = async (id) => {
         }
 
         .time {
+            font-size: 14px;
+
             p {
+
                 color: #a6a6a6;
+            }
+
+            button {
+                padding: 5px 10px;
+                margin: 0 20px;
             }
         }
     }

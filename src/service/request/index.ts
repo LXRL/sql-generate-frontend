@@ -1,14 +1,13 @@
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios"
 import { BASE_URL, TIMEOUT } from "./config";
-
 class HYRequest {
     private instance;
-
     constructor(baseURL: string, timeout: number = 1000) {
         this.instance = axios.create({
             baseURL,
             timeout,
+            withCredentials: true
         })
     }
 

@@ -6,6 +6,13 @@ export function getUserLogin(params) {
         data: params,
     })
 }
+
+export function getUserGetLogin() {
+    return hyRequest.get({
+        url: 'user/get/login',
+    })
+}
+
 export function getUserSign(params) {
     return hyRequest.post({
         url: 'user/register',

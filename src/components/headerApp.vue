@@ -55,14 +55,9 @@ if (isLoggedIn) {
             </template>
         </div>
         <div class="login">
-            <template v-if="isLoggedIn">
-                <div class="name">
-                    {{ userName }}
-                </div>
-            </template>
-            <template v-else>
-                <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
-            </template>
+
+            <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
+
         </div>
     </div>
 </template>

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import type { loginType } from '@/types'
 import { getUserLogin } from '@/service/modules/user'
+import { getUserGetLogin } from '@/service/modules/user'
 import { useRouter } from 'vue-router';
 
 
@@ -10,11 +11,7 @@ const login: loginType = ref({})
 const onSubmit = async () => {
     try {
         const response = await getUserLogin(login.value)
-        console.log(response)
-        if (response.data.code === 0) {
-            localStorage.setItem('user', JSON.stringify(response.data.data));
-            localStorage.setItem('isLoggedIn', 'true');
-        }
+        const res = await getUserGetLogin()
         genTo()
     } catch (error) {
         console.log("获取用户信息错误", error)
@@ -102,7 +99,6 @@ const genTo = () => router.push("/generate")
                 border: 1px solid var(--underline-border-color);
                 align-items: center;
                 margin-bottom: 16px;
-
                 input {
                     width: 268px;
                     height: 25px;
@@ -111,20 +107,17 @@ const genTo = () => router.push("/generate")
                     background-color: #E8F0FE;
                     margin: 0 5px;
                 }
-
                 .icon {
                     width: 16px;
                     height: 16px;
                 }
             }
-
             .sign {
                 display: flex;
                 justify-content: space-between;
                 color: #409EFF;
                 margin-bottom: 16px;
                 font-size: 14px;
-
                 div {
                     cursor: pointer;
                 }
