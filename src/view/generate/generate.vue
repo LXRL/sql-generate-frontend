@@ -6,6 +6,7 @@ import generateForm from './components/generateForm.vue';
 import { getGenAuto } from '@/service';
 import { getUploadExcelFile } from '@/service'
 import generateResult from './components/generateResult.vue';
+import genTable from './components/genTable.vue';
 // Form
 const formStore = useFormStore();
 const form = formStore.form
@@ -68,6 +69,8 @@ const uploadFile = () => {
     fileInput.value?.click();  // 触发文件选择对话框
 };
 
+
+
 </script>
 
 <template>
@@ -123,16 +126,7 @@ const uploadFile = () => {
 
                     <!-- 导入表 -->
                     <el-drawer v-model="tableShow" title="导入表">
-                        <div class="header">
-                            <p>表信息列表</p>
-                            <button>创建表</button>
-                        </div>
-                        <div class="search">
-                            <el-input v-model="search" style="width: 200px;" placeholder="请输入名称" />
-                            <button>搜索</button>
-                        </div>
-                        <div class="info">
-                        </div>
+                        <genTable></genTable>
                     </el-drawer>
 
                     <!-- 导入配置 -->

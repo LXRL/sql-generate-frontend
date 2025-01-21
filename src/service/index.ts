@@ -1,2 +1,5 @@
 export * from "./modules/generate"
 export * from "./modules/lexicon"
+export * from "./modules/fields"
+export * from "./modules/table"
+export * from "./modules/user"

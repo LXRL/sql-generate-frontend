@@ -4,6 +4,8 @@ import { getTabPage } from '@/service/modules/table';
 import { getFiePage } from '@/service/modules/fields';
 
 import { getMyLexPage } from '@/service/modules/lexicon';
+import { getMyTabPage } from '@/service/modules/table';
+import { getMyFiePage } from '@/service/modules/fields';
 
 const useFormList = defineStore("formList", {
     state: () => ({
@@ -13,7 +15,9 @@ const useFormList = defineStore("formList", {
         fieldsPage: [],
 
         // 个人
-        MyFormPage: []
+        MyFormPage: [],
+        MyTablePage: [],
+        MyFieldsPage: [],
     }),
     actions: {
         // 公开
@@ -34,6 +38,14 @@ const useFormList = defineStore("formList", {
         async fetchGetMyLexPage() {
             const res = await getMyLexPage()
             this.MyFormPage = res.data
+        },
+        async fetchGetMyTanPage() {
+            const res = await getMyTabPage()
+            this.MyTablePage = res.data
+        },
+        async fetchGetMyFiePage() {
+            const res = await getMyFiePage()
+            this.MyFieldsPage = res.data
         },
     }
 })

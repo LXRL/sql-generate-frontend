@@ -24,7 +24,12 @@ body {
 }
 
 button:hover {
+    color: #1890FF;
     border-color: var(--underline-border-color);
+}
+
+button:focus {
+    outline: none;
 }
 
 html {
@@ -49,6 +54,6 @@ img {
 }
 
 button {
-    border-radius: 0;
+    border-radius: 5px;
     padding: 10px 16px;
 }

@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import infoAll from '@/components/infoAll.vue';
-import infoLeft from '@/components/infoLeft.vue';
-import useFormList from '@/store/modules/formList';
 import { storeToRefs } from 'pinia';
+import infoRight from '@/components/infoRight.vue';
+import useFormList from '@/store/modules/formList';
 import { getFieSql } from '@/service/modules/fields';
-import fieldsRight from './fieldsRight.vue';
 
 const formListStore = useFormList()
-const { fieldsPage } = storeToRefs(formListStore)
-formListStore.fetchGetFiePage()
-console.log(fieldsPage?.value.data?.records)
+const { MyFieldsPage } = storeToRefs(formListStore)
+formListStore.fetchGetMyFiePage()
+console.log(MyFieldsPage?.value.data?.records)
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => fieldsPage?.value.data?.records?.length);
+const totalRecords = computed(() => MyFieldsPage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return fieldsPage?.value.data?.records.slice(start, end);
+    return MyFieldsPage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理
@@ -69,60 +67,52 @@ const judgmentK = (value) => {
 }
 </script>
 <template>
-    <div class="fields">
-        <infoAll title="参考或学习字段设计，高效完成建表！">
-            <template v-slot:conditions>
-                <infoLeft>
-                    <template v-slot:heInfo>
-                        <p>公开字段信息</p>
-                        <button class="Button">去创建</button>
-                    </template>
-                    <template v-slot:seInfo>
-                        <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
-                        <button class="Button">搜索</button>
-                    </template>
-                    <template v-slot:daInfo>
-                        <template v-for="item in paginatedData" :key="item.name">
-                            <div class="daInfo">
-                                <div class="name">
-                                    <h4>{{ item.name }}</h4> <span class="">官方</span>
-                                </div>
-                                <div class="filedList">
-                                    <div>表名: <span>{{ getContent(item.content).fieldName }}</span> </div>
-                                    <div>类型: <span>{{ getContent(item.content).fieldType }}</span></div>
-                                    <div>注释: <span>{{ getContent(item.content).comment }}</span></div>
-                                    <div>默认值: <span>{{ judgment(getContent(item.content).defaultValue) }}</span> </div>
-                                    <div>自增: <span>{{ judgmentZ(getContent(item.content).autoIncrement) }}</span></div>
-                                    <div>主键: <span>{{ judgmentZ(getContent(item.content).primaryKey) }}</span></div>
-                                    <div>非空: <span>{{ judgmentK(getContent(item.content).notNull) }}</span> </div>
-                                    <div>onUpDate: <span>{{ judgment(getContent(item.content).onUpdate) }}</span></div>
-                                </div>
-
-                                <div class="time">
-                                    <p>{{ getTime(item.updateTime) }}</p>
-                                    <button class="bu" @click="getCopy(item.id)">复制语句</button>
-                                    <button>举报</button>
-                                </div>
-                            </div>
-                        </template>
-                        <div class="pag">
-                            <el-pagination layout=" prev, pager, next" :total="totalRecords" :page-size="pageSize"
-                                :current-page="currentPage" @current-change="handlePageChange" />
+    <div class="Right">
+        <infoRight>
+            <template v-slot:heInfo>
+                <p>公开字段信息</p>
+                <button class="Button">去创建</button>
+            </template>
+            <template v-slot:seInfo>
+                <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
+                <button class="Button">搜索</button>
+            </template>
+            <template v-slot:daInfo>
+                <template v-for="item in paginatedData" :key="item.name">
+                    <div class="daInfo">
+                        <div class="name">
+                            <h4>{{ item.name }}</h4> <span class="">官方</span>
                         </div>
-                    </template>
-                </infoLeft>
-            </template>
+                        <div class="filedList">
+                            <div>表名: <span>{{ getContent(item.content).fieldName }}</span> </div>
+                            <div>类型: <span>{{ getContent(item.content).fieldType }}</span></div>
+                            <div>注释: <span>{{ getContent(item.content).comment }}</span></div>
+                            <div>默认值: <span>{{ judgment(getContent(item.content).defaultValue) }}</span> </div>
+                            <div>自增: <span>{{ judgmentZ(getContent(item.content).autoIncrement) }}</span></div>
+                            <div>主键: <span>{{ judgmentZ(getContent(item.content).primaryKey) }}</span></div>
+                            <div>非空: <span>{{ judgmentK(getContent(item.content).notNull) }}</span> </div>
+                            <div>onUpDate: <span>{{ judgment(getContent(item.content).onUpdate) }}</span></div>
+                        </div>
 
-            <template v-slot:result>
-                <fieldsRight></fieldsRight>
+                        <div class="time">
+                            <p>{{ getTime(item.updateTime) }}</p>
+                            <button class="bu" @click="getCopy(item.id)">复制语句</button>
+                            <button>举报</button>
+                        </div>
+                    </div>
+                </template>
+                <div class="pag">
+                    <el-pagination layout=" prev, pager, next" :total="totalRecords" :page-size="pageSize"
+                        :current-page="currentPage" @current-change="handlePageChange" />
+                </div>
             </template>
-        </infoAll>
+        </infoRight>
     </div>
 </template>
 
 
 <style lang="less" scoped>
-.fields {
+.Right {
     .Button {
         padding: 5px 10px;
         color: white;

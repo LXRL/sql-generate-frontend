@@ -45,3 +45,7 @@
     min-height: none !important;
     height: 361px !important;
 }
+
+.add .el-textarea__inner {
+    height: 176px !important;
+}

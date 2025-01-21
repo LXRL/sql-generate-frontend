@@ -153,7 +153,7 @@ const getSql = async (id) => {
 
         .name {
             p {
-                font-size: 17px;
+                font-size: 16px;
                 margin-right: 7px !important;
             }
 

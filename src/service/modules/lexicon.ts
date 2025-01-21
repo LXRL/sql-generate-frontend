@@ -18,3 +18,17 @@ export function getMyLexPage() {
         url: 'dict/my/list/page',
     })
 }
+
+export function deleteMyLexPage(params) {
+    return hyRequest.post({
+        url: 'dict/delete',
+        data: { id: params }
+    })
+}
+
+export function AddMyLexPage(params) {
+    return hyRequest.post({
+        url: 'dict/add',
+        data: { name: params.name, content: params.content }
+    })
+}

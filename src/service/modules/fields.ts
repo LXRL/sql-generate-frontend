@@ -11,3 +11,16 @@ export function getFieSql(params) {
         data: params
     })
 }
+
+export function getMyFiePage() {
+    return hyRequest.get({
+        url: 'field_info/my/list/page',
+    })
+}
+
+export function deleteMyFiePage(params) {
+    return hyRequest.post({
+        url: 'field_info/delete',
+        data: { id: params }
+    })
+}

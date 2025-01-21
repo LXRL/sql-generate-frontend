@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { getGenSchema } from '@/service/index';
 import { useFormStore } from '@/store/modules/formStore';
 import { useFormDataStore } from '@/store/modules/formData';
+import { AddMyTabPage } from '@/service';
 
 // Form
 const formStore = useFormStore();
@@ -123,6 +124,33 @@ const resetClick = () => {
     form.mockNum = 10;
     form.fieldList = []; // 重置为一个空数组
 }
+
+// 保存表
+const saveShow = ref(false)
+
+type saveType = {
+    name: string;
+    content: string;
+};
+
+const saveForm = reactive<saveType>({
+    name: '',
+    content: ''
+});
+
+const saveContent = () => {
+    saveShow.value = true
+    saveForm.content = JSON.stringify(form)
+}
+
+const saveSubmit = async () => {
+    try {
+        const res = await AddMyTabPage(saveForm)
+        saveShow.value = false
+    } catch (error) {
+        console.log("创建失败", error)
+    }
+}
 </script>
 <template>
     <div class="Form">
@@ -236,11 +264,34 @@ const resetClick = () => {
             <!-- submit -->
             <el-form-item>
                 <el-button type="primary" @click="onSubmit" style="width: 200px;">一键生成</el-button>
-                <el-button>保存表</el-button>
+                <el-button @click="saveContent()">保存表</el-button>
                 <el-button>复制配置</el-button>
                 <el-button @click="resetClick()">重置</el-button>
             </el-form-item>
         </el-form>
+
+        <!-- 保存表 -->
+        <el-dialog v-model="saveShow" title="保存表信息(后续可直接导入)" width="520" style="padding: 24px;">
+            <div class="header" style="margin-bottom: 16px;">注意,你提交的内容可能会被公开</div>
+            <el-form :model="saveForm">
+                <el-form-item>
+                    <p>名称</p>
+                    <el-input v-model="saveForm.name" placeholder="请输入中文名称" />
+                </el-form-item>
+                <el-form-item>
+                    <p>内容 (不建议在此处修改)</p>
+                    <el-input class="add" v-model="saveForm.content" autocomplete="off"
+                        placeholder="请输入配置JSON，可以从表单输入处复制" type="textarea" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="primary" @click="saveSubmit()">提交</el-button>
+                    <el-button>重置</el-button>
+                </div>
+            </template>
+        </el-dialog>
+
     </div>
 </template>
 

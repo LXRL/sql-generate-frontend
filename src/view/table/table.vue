@@ -7,6 +7,7 @@ import { storeToRefs } from 'pinia';
 import { getTabSql } from '@/service/modules/table';
 import { useFormStore } from '@/store/modules/formStore';
 import { useRouter } from 'vue-router';
+import tableRight from './tableRight.vue';
 
 const formListStore = useFormList()
 const { tablePage } = storeToRefs(formListStore)
@@ -99,11 +100,11 @@ const getCopy = async (id) => {
                                     <button @click="setFormData(item.content)">导入</button>
                                 </div>
                                 <div class="dbName">
-                                    <div>表名:{{ getContent(item.content).tableName }}</div>
-                                    <div>表注释:{{ getContent(item.content).tableComment }}</div>
+                                    <div>表名: <span>{{ getContent(item.content).tableName }}</span></div>
+                                    <div>表注释: <span>{{ getContent(item.content).tableComment }}</span> </div>
                                 </div>
                                 <div class="annotation">
-                                    <p>{{ getName(item.content) }}</p>
+                                    <p>字段列表: <span>{{ getName(item.content) }}</span></p>
                                 </div>
                                 <div class="time">
                                     <p>{{ getTime(item.updateTime) }}</p>
@@ -121,6 +122,7 @@ const getCopy = async (id) => {
             </template>
 
             <template v-slot:result>
+                <tableRight></tableRight>
             </template>
         </infoAll>
     </div>
@@ -154,7 +156,7 @@ const getCopy = async (id) => {
             margin-bottom: 20px;
 
             h4 {
-                font-size: 17px;
+                font-size: 16px;
                 margin-right: 7px !important;
             }
 
@@ -195,11 +197,15 @@ const getCopy = async (id) => {
         }
 
         .time {
+            font-size: 14px;
+
             p {
+
                 color: #a6a6a6;
             }
 
-            .bu {
+            button {
+                padding: 5px 10px;
                 margin: 0 20px;
             }
         }
