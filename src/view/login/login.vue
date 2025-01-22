@@ -4,14 +4,24 @@ import type { loginType } from '@/types'
 import { getUserLogin } from '@/service/modules/user'
 import { getUserGetLogin } from '@/service/modules/user'
 import { useRouter } from 'vue-router';
+import userLogin from '@/store/modules/login';
+import { storeToRefs } from 'pinia';
 
-
+// 登录
 const login: loginType = ref({})
+const loginStore = userLogin()
+const { isLoggedIn, userData } = storeToRefs(loginStore)
 
 const onSubmit = async () => {
     try {
         const response = await getUserLogin(login.value)
         const res = await getUserGetLogin()
+
+        if (response.data.code === 0) {
+            isLoggedIn.value = true
+            userData.value = res.data
+            console.log(userData)
+        }
         genTo()
     } catch (error) {
         console.log("获取用户信息错误", error)
@@ -21,6 +31,13 @@ const onSubmit = async () => {
 const router = useRouter()
 const signTo = () => router.push("/sign")
 const genTo = () => router.push("/generate")
+
+// 密码显示隐藏
+const passWordShow = ref<boolean>(false)
+const changeShow = () => {
+    passWordShow.value = !passWordShow.value
+}
+
 </script>
 <template>
     <div class="body">
@@ -33,14 +50,17 @@ const genTo = () => router.push("/generate")
             <div class="info">
                 <el-form :model="login" label-width="auto">
                     <div class="userAccount">
-                        <img class="icon" src="" alt="">
+                        <img class="icon" src="@/assets/images/login_login.png" alt="">
                         <input v-model="login.userAccount" placeholder="请输入账号" />
-                        <img class="icon" src="" alt="">
+                        <img class="icon cur" src="@/assets/images/login_delete.png" alt="">
                     </div>
                     <div class="userPassword">
-                        <img class="icon" src="" alt="">
-                        <input v-model="login.userPassword" placeholder="请输入密码" />
-                        <img class="icon" src="" alt="">
+                        <img class="icon" src="@/assets/images/login_lock.png" alt="">
+                        <input v-model="login.userPassword" placeholder="请输入密码"
+                            :type="passWordShow ? 'text' : 'password'" />
+                        <img v-if="passWordShow" class="icon cur" src="@/assets/images/login_see.png" alt=""
+                            @click="changeShow()">
+                        <img v-else class="icon cur" src="@/assets/images/login_noSee.png" alt="" @click="changeShow()">
                     </div>
                     <div class="sign">
                         <div @click="signTo">新用户注册</div>
@@ -99,6 +119,7 @@ const genTo = () => router.push("/generate")
                 border: 1px solid var(--underline-border-color);
                 align-items: center;
                 margin-bottom: 16px;
+
                 input {
                     width: 268px;
                     height: 25px;
@@ -107,17 +128,24 @@ const genTo = () => router.push("/generate")
                     background-color: #E8F0FE;
                     margin: 0 5px;
                 }
+
                 .icon {
                     width: 16px;
                     height: 16px;
                 }
+
+                .cur {
+                    cursor: pointer;
+                }
             }
+
             .sign {
                 display: flex;
                 justify-content: space-between;
                 color: #409EFF;
                 margin-bottom: 16px;
                 font-size: 14px;
+
                 div {
                     cursor: pointer;
                 }

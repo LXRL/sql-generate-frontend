@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import infoRight from '@/components/infoRight.vue';
 import useFormList from '@/store/modules/formList';
-import { storeToRefs } from 'pinia';
-import { getTabSql, deleteMyTabPage } from '@/service/modules/table';
-import { useFormStore } from '@/store/modules/formStore';
-import { useRouter } from 'vue-router';
+import { getFieSql } from '@/service/modules/fields';
 
 const formListStore = useFormList()
-const { MyTablePage } = storeToRefs(formListStore)
-formListStore.fetchGetMyTanPage()
-const isNull = computed(() => MyTablePage?.value.data?.records?.length);
+const { fieldsPage } = storeToRefs(formListStore)
+formListStore.fetchGetFiePage()
+console.log(fieldsPage?.value.data?.records)
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => MyTablePage?.value.data?.records?.length);
+const totalRecords = computed(() => fieldsPage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return MyTablePage?.value.data?.records.slice(start, end);
+    return fieldsPage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理
@@ -29,36 +27,13 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref('');
 
-// 导入 form
-const router = useRouter()
-const formStore = useFormStore();
-const form = formStore.form
-const setFormData = (content) => {
-    const res = getContent(content);
-    console.log(res)
-    form.dbName = res.dbName;
-    form.tableName = res.tableName;
-    form.tableComment = res.tableComment;
-    form.mockNum = res.mockNum;
-    form.fieldList = res.fieldList;
-    router.push('/generate')
-}
 
 // key
 const getContent = (content) => {
     const jsonObject = JSON.parse(content);
     return jsonObject
 }
-const getName = (content) => {
-    try {
-        const jsonObject = JSON.parse(content);
-        const fieldNames = jsonObject.fieldList.map(item => item.fieldName).join(', ');
-        return fieldNames;
-    } catch (error) {
-        console.log("JSON parse error:", error);
-        return content; // 如果解析失败，返回原始内容
-    }
-}
+
 // 日期
 const getTime = (time) => {
     return time.substring(0, 10);
@@ -67,7 +42,7 @@ const getTime = (time) => {
 // 复制语句
 const getCopy = async (id) => {
     try {
-        const res = await getTabSql(id)
+        const res = await getFieSql(id)
         await navigator.clipboard.writeText(res.data.data);
         alert('复制成功！'); // 可选：显示成功提示
 
@@ -76,71 +51,56 @@ const getCopy = async (id) => {
     }
 }
 
-// 删除
-const deleteShow = ref(Array(MyTablePage?.value.data?.records?.length).fill(false))
-const deletePage = async (id) => {
-    try {
-        await deleteMyTabPage(id)
-        formListStore.fetchGetMyTabPage()
-    } catch (error) {
-        console.log("获取数据失败", error);
-    }
+// 判断
+const judgment = (value) => {
+    if (value)
+        return value
+    else return '无'
+}
+const judgmentZ = (value) => {
+    if (value) return '是'
+    else return '否'
+}
+const judgmentK = (value) => {
+    if (value) return '是'
+    else return '否'
 }
 
-const genTo = () => {
-    router.push("/generate")
-}
+
 </script>
 <template>
     <div class="Right">
         <infoRight>
             <template v-slot:heInfo>
-                <p>个人表</p>
-                <button class="Button" @click="genTo()">创建表</button>
+                <p>字段信息列表</p>
+                <button class="Button">去创建</button>
             </template>
             <template v-slot:seInfo>
                 <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
                 <button class="Button">搜索</button>
             </template>
             <template v-slot:daInfo>
-                <template v-if="isNull" v-for="(item, index) in paginatedData" :key="item.name">
+                <template v-for="item in paginatedData" :key="item.name">
                     <div class="daInfo">
                         <div class="name">
                             <h4>{{ item.name }}</h4> <span class="">官方</span>
-                            <button @click="setFormData(item.content)">导入</button>
                         </div>
-                        <div class="dbName">
-                            <div>表名: <span>{{ getContent(item.content).tableName }}</span></div>
-                            <div>表注释: <span>{{ getContent(item.content).tableComment }}</span> </div>
+                        <div class="filedList">
+                            <div>表名: <span>{{ getContent(item.content).fieldName }}</span> </div>
+                            <div>类型: <span>{{ getContent(item.content).fieldType }}</span></div>
+                            <div>注释: <span>{{ getContent(item.content).comment }}</span></div>
+                            <div>默认值: <span>{{ judgment(getContent(item.content).defaultValue) }}</span> </div>
+                            <div>自增: <span>{{ judgmentZ(getContent(item.content).autoIncrement) }}</span></div>
+                            <div>主键: <span>{{ judgmentZ(getContent(item.content).primaryKey) }}</span></div>
+                            <div>非空: <span>{{ judgmentK(getContent(item.content).notNull) }}</span> </div>
+                            <div>onUpDate: <span>{{ judgment(getContent(item.content).onUpdate) }}</span></div>
                         </div>
-                        <div class="annotation">
-                            <p>字段列表: <span>{{ getName(item.content) }}</span></p>
-                        </div>
+
                         <div class="time">
                             <p>{{ getTime(item.updateTime) }}</p>
                             <button class="bu" @click="getCopy(item.id)">复制语句</button>
                             <button>举报</button>
-                            <el-popover :visible="deleteShow[index]" placement="top" :width="160">
-                                <p>你确定要删除？</p>
-                                <div style="text-align: right; margin: 10px 0 0 0">
-                                    <el-button size="small" text @click="deleteShow[index] = false">取消</el-button>
-                                    <el-button size="small" type="primary"
-                                        @click="deleteShow[index] = false, deletePage(item.id)">
-                                        确定
-                                    </el-button>
-                                </div>
-                                <template #reference>
-                                    <el-button @click="deleteShow[index] = true"
-                                        style="border: none;background-color: #F9F9F9;">删除</el-button>
-                                </template>
-                            </el-popover>
                         </div>
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="null">
-                        <img src="@/assets/images/null.png" alt="">
-                        <p>暂无数据</p>
                     </div>
                 </template>
                 <div class="pag">
@@ -204,10 +164,17 @@ const genTo = () => {
             }
         }
 
-        .dbName {
-            width: 340px;
+        .filedList {
+            width: 700px;
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+
+            div {
+                font-size: 14px;
+                width: 150px;
+                margin-right: 60px;
+                margin-bottom: 15px;
+            }
         }
 
         .annotation {
@@ -232,22 +199,6 @@ const genTo = () => {
                 padding: 5px 10px;
                 margin: 0 20px;
             }
-        }
-    }
-
-    .null {
-        width: 100%;
-        height: 100px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        img {
-            width: 50px;
-        }
-
-        p {
-            color: #C7C7C7;
         }
     }
 

@@ -26,13 +26,6 @@ export function deleteMyTabPage(params) {
     })
 }
 
-export function deleteMyTanPage(params) {
-    return hyRequest.post({
-        url: 'table_info/delete',
-        data: { id: params }
-    })
-}
-
 export function AddMyTabPage(params) {
     return hyRequest.post({
         url: 'table_info/add',

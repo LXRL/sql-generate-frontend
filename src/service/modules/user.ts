@@ -26,6 +26,11 @@ export function getUser() {
     })
 }
 
+export function logout() {
+    return hyRequest.post({
+        url: 'user/logout',
+    })
+}
 
 
 

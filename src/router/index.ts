@@ -32,6 +32,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/view/lexicon/lexAdd.vue")
     },
     {
+        path: "/addResult",
+        component: () => import("@/view/lexicon/AddResult.vue")
+    },
+    {
         path: "/table",
         component: () => import("@/view/table/table.vue")
     },

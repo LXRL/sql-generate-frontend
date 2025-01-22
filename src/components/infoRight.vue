@@ -1,4 +1,15 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import userLogin from '@/store/modules/login';
+
+const loginStore = userLogin()
+const { isLoggedIn } = storeToRefs(loginStore)
+
+const router = useRouter()
+const loginTo = () => {
+    router.push("/login")
+}
 </script>
 
 <template>
@@ -8,10 +19,18 @@
         </div>
         <div class="info">
             <div class="search">
-                <slot name="seInfo"></slot>
+                <slot v-if="isLoggedIn" name="seInfo"></slot>
             </div>
             <div class="data">
-                <slot name="daInfo"></slot>
+                <template v-if="isLoggedIn">
+                    <slot name="daInfo"></slot>
+                </template>
+                <template v-else>
+                    <div class="loginTo">
+                        <img src="@/assets/images/null.png" alt="">
+                        <button @click="loginTo">请先登录</button>
+                    </div>
+                </template>
             </div>
         </div>
         <slot name="drInfo"></slot>
@@ -48,6 +67,23 @@
         .data {
             width: 100%;
             margin: 16px 0;
+
+            .loginTo {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                img {
+                    width: 100px;
+                }
+
+                button {
+                    padding: 5px 10px !important;
+                    border: 1px solid #1890FF;
+                    color: #1890FF;
+                }
+            }
         }
     }
 

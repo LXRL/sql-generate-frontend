@@ -3,7 +3,8 @@ import { ref, reactive } from 'vue';
 import { getGenSchema } from '@/service/index';
 import { useFormStore } from '@/store/modules/formStore';
 import { useFormDataStore } from '@/store/modules/formData';
-import { AddMyTabPage } from '@/service';
+import { AddMyTabPage, AddMyFiePage } from '@/service';
+import genFields from './genFields.vue';
 
 // Form
 const formStore = useFormStore();
@@ -151,6 +152,35 @@ const saveSubmit = async () => {
         console.log("创建失败", error)
     }
 }
+const reset = () => {
+    saveForm.name = ''
+}
+//  导入字段
+const fieldsShow = ref<boolean>(false)
+
+// 保存字段
+const fieldsSaveShow = ref<boolean>(false)
+const fieldsForm = reactive<saveType>({
+    name: '',
+    content: ''
+});
+
+const fieldsContent = (data) => {
+    fieldsSaveShow.value = true
+    fieldsForm.content = JSON.stringify(data)
+}
+
+const fieldsSubmit = async () => {
+    try {
+        const res = await AddMyFiePage(fieldsForm)
+        fieldsSaveShow.value = false
+    } catch (error) {
+        console.log("创建失败", error)
+    }
+}
+const fieldsReset = () => {
+    fieldsForm.name = ''
+}
 </script>
 <template>
     <div class="Form">
@@ -185,8 +215,8 @@ const saveSubmit = async () => {
                                     <el-form-item label="字段名:">
                                         <el-input v-model="item.fieldName" placeholder="多个单词间建议用下划线分割" />
                                     </el-form-item>
-                                    <div>
-                                        <span>保存</span>
+                                    <div class="buDiv">
+                                        <span @click="fieldsContent(item)">保存</span>
                                         <span @click="fieldListDelete(index)">删除</span>
                                     </div>
                                 </div>
@@ -257,7 +287,7 @@ const saveSubmit = async () => {
             <!-- formP -->
             <el-form-item>
                 <div class="formP" @click="newClick()">+ 新增字段</div>
-                <div class="formP" style="margin: 10px 0;">+ 导入字段</div>
+                <div class="formP" @click="fieldsShow = true" style="margin: 10px 0;">+ 导入字段</div>
                 <div class="formP" @click="universalClick()">+ 新增通用字段</div>
             </el-form-item>
 
@@ -287,7 +317,34 @@ const saveSubmit = async () => {
             <template #footer>
                 <div class="dialog-footer">
                     <el-button type="primary" @click="saveSubmit()">提交</el-button>
-                    <el-button>重置</el-button>
+                    <el-button @click="reset()">重置</el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- 导入字段 -->
+        <el-drawer v-model="fieldsShow" title="导入字段">
+            <genFields></genFields>
+        </el-drawer>
+
+        <!-- 保存字段 -->
+        <el-dialog v-model="fieldsSaveShow" title="保存字段信息(后续可直接导入)" width="520" style="padding: 24px;">
+            <div class="header" style="margin-bottom: 16px;">注意,你提交的内容可能会被公开</div>
+            <el-form :model="fieldsForm">
+                <el-form-item>
+                    <p>名称</p>
+                    <el-input v-model="fieldsForm.name" placeholder="请输入中文名称" />
+                </el-form-item>
+                <el-form-item>
+                    <p>内容 (不建议在此处修改)</p>
+                    <el-input class="add" v-model="fieldsForm.content" autocomplete="off"
+                        placeholder="请输入配置JSON，可以从表单输入处复制" type="textarea" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="primary" @click="fieldsSubmit()">提交</el-button>
+                    <el-button @click="fieldsReset()">重置</el-button>
                 </div>
             </template>
         </el-dialog>

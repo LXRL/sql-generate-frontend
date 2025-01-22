@@ -3,6 +3,7 @@ import { ref, reactive, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFormList from '@/store/modules/formList';
 import { AddMyLexPage } from '@/service'
+import { useRouter } from 'vue-router';
 
 const formListStore = useFormList();
 const { MyFormPage } = storeToRefs(formListStore);
@@ -33,10 +34,21 @@ const updateContent = (selectedValue: string) => {
 const onSubmit = async () => {
     try {
         const res = await AddMyLexPage(form)
-        console.log(res)
+        resultTo()
     } catch (error) {
         console.log("创建失败", error)
     }
+}
+
+const reset = () => {
+    form.name = ''
+    form.content = ''
+    Data.value = ''
+}
+// 跳转
+const router = useRouter()
+const resultTo = () => {
+    router.push("/addResult")
 }
 </script>
 
@@ -60,7 +72,7 @@ const onSubmit = async () => {
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="onSubmit">提交</el-button>
-                <el-button>重置</el-button>
+                <el-button @click="reset()">重置</el-button>
             </el-form-item>
         </el-form>
     </div>

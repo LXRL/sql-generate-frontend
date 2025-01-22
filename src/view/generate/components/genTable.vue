@@ -8,18 +8,18 @@ import { useFormStore } from '@/store/modules/formStore';
 import { useRouter } from 'vue-router';
 
 const formListStore = useFormList()
-const { MyTablePage } = storeToRefs(formListStore)
-formListStore.fetchGetMyTanPage()
-console.log(MyTablePage.value.data?.records)
+const { tablePage } = storeToRefs(formListStore)
+formListStore.fetchGetTabPage()
+console.log(tablePage.value.data?.records)
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => MyTablePage?.value.data?.records?.length);
+const totalRecords = computed(() => tablePage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return MyTablePage?.value.data?.records.slice(start, end);
+    return tablePage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理
@@ -77,7 +77,7 @@ const getCopy = async (id) => {
 }
 
 // 删除
-const deleteShow = ref(Array(MyTablePage?.value.data?.records?.length).fill(false))
+const deleteShow = ref(Array(tablePage?.value.data?.records?.length).fill(false))
 const deletePage = async (id) => {
     try {
         await deleteMyTabPage(id)

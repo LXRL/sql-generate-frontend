@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { logout } from '@/service';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
+import userLogin from '@/store/modules/login';
+import { storeToRefs } from 'pinia';
 
 // navigation 
 const navList = ref<{ name: string; path: string }[]>([
@@ -34,11 +37,20 @@ const loginTo = () => {
 }
 
 // 登录状态
-const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-const userName = ref('')
+// 检查用户是否登录
+const loginStore = userLogin()
+const { isLoggedIn, userData } = storeToRefs(loginStore)
+const userName = ref('');
+const account = ref('');
 if (isLoggedIn) {
-    const user = JSON.parse(localStorage.getItem('user') || '{}')
-    userName.value = user.userAccount.charAt(0).toUpperCase() || '用户'
+    userName.value = userData?.value.data?.userAccount.charAt(0).toUpperCase()
+    account.value = userData?.value.data?.userAccount;
+}
+
+// 登录
+const clickOut = async () => {
+    await logout()
+    isLoggedIn.value = false;
 }
 </script>
 
@@ -55,9 +67,23 @@ if (isLoggedIn) {
             </template>
         </div>
         <div class="login">
-
-            <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
-
+            <template v-if="isLoggedIn">
+                <div class="name">
+                    <el-popover trigger="hover" popper-class="pop">
+                        <button class="account" style="color: #C7C7C7;">{{ account }}</button>
+                        <div class="out">
+                            <img src="@/assets/images/out.png" alt="">
+                            <div @click="clickOut()">退出登录</div>
+                        </div>
+                        <template #reference>
+                            <div class="box"> {{ userName }}</div>
+                        </template>
+                    </el-popover>
+                </div>
+            </template>
+            <template v-else>
+                <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
+            </template>
         </div>
     </div>
 </template>
@@ -101,19 +127,22 @@ if (isLoggedIn) {
     .login {
         margin-left: auto;
 
-        div {
-            padding: 5px 10px;
-            font-size: 12px;
-            color: white;
-            background-color: #CCCCCC;
-            border-radius: 50%;
-        }
-
-        .el-button {
+        .Button {
             width: 60px;
             color: #1890FF;
             background-color: white;
             border: 1px solid #1890FF;
+        }
+
+        .name {
+            .box {
+                font-size: 14px;
+                border-radius: 50%;
+                padding: 3px 10px;
+                background-color: #CCCCCC;
+                color: white;
+                cursor: pointer;
+            }
         }
     }
 }

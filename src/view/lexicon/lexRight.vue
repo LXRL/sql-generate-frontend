@@ -15,7 +15,7 @@ const addTo = () => {
 const formListStore = useFormList()
 const { MyFormPage } = storeToRefs(formListStore)
 formListStore.fetchGetMyLexPage()
-console.log(MyFormPage)
+const isNull = computed(() => MyFormPage?.value.data?.records?.length)
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
@@ -72,12 +72,13 @@ const deletePage = async (id) => {
         console.log("获取数据失败", error);
     }
 }
+
 </script>
 <template>
     <div class="Right">
         <infoRight>
             <template v-slot:heInfo>
-                <p>公开词库</p>
+                <p>个人词库</p>
                 <button class="Button" @click="addTo()">创建词库</button>
             </template>
             <template v-slot:seInfo>
@@ -85,7 +86,7 @@ const deletePage = async (id) => {
                 <button class="Button">搜索</button>
             </template>
             <template v-slot:daInfo>
-                <template v-for="(item, index) in paginatedData" :key="item.name">
+                <template v-if="isNull" v-for="(item, index) in paginatedData" :key="item.name">
                     <div class="daInfo">
                         <div class="name">
                             <p>{{ item.name }}</p> <span class="">官方</span>
@@ -113,6 +114,12 @@ const deletePage = async (id) => {
                                 </template>
                             </el-popover>
                         </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="null">
+                        <img src="@/assets/images/null.png" alt="">
+                        <p>暂无数据</p>
                     </div>
                 </template>
                 <div class="pag">
@@ -213,6 +220,22 @@ const deletePage = async (id) => {
                 padding: 5px 10px;
                 margin: 0 20px;
             }
+        }
+    }
+
+    .null {
+        width: 100%;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        img {
+            width: 50px;
+        }
+
+        p {
+            color: #C7C7C7;
         }
     }
 

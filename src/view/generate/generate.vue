@@ -7,6 +7,7 @@ import { getGenAuto } from '@/service';
 import { getUploadExcelFile } from '@/service'
 import generateResult from './components/generateResult.vue';
 import genTable from './components/genTable.vue';
+import genFields from './components/genFields.vue';
 // Form
 const formStore = useFormStore();
 const form = formStore.form
@@ -27,8 +28,6 @@ const onSubmit = async () => {
 
 // tableShow 导入表
 const tableShow = ref<boolean>(false)
-// search 搜索框
-const search = ref<string>("")
 
 // disposition 导入配置
 const disposition = ref()
@@ -128,7 +127,6 @@ const uploadFile = () => {
                     <el-drawer v-model="tableShow" title="导入表">
                         <genTable></genTable>
                     </el-drawer>
-
                     <!-- 导入配置 -->
                     <el-dialog v-model="dispositionShow" title="导入配置" width="520" style="padding: 24px;">
                         <div class="header">请输入表结构JSON：<button class="Button" @click="setDisposition">导入示例</button>

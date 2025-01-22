@@ -24,3 +24,9 @@ export function deleteMyFiePage(params) {
         data: { id: params }
     })
 }
+export function AddMyFiePage(params) {
+    return hyRequest.post({
+        url: 'field_info/add',
+        data: { name: params.name, content: params.content }
+    })
+}
