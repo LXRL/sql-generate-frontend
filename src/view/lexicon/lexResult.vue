@@ -31,7 +31,6 @@ watch(
         codeText.value = newFormData?.data?.[props.language] || '';
         codeTextSql.value = newFormData?.data?.createSql || '';
         codeDataList.value = newFormData?.data?.dataList || [];
-        console.log("coderText", codeText.value)
     },
     { immediate: true } // 立即执行以确保初始加载时也能获取数据
 );
@@ -43,14 +42,25 @@ const editorOptions = {
     lineNumbers: true,
 };
 
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 // 复制到剪贴板的函数
 const copyToClipboard = async (data) => {
     try {
         await navigator.clipboard.writeText(data);
 
-        alert('复制成功！'); // 可选：显示成功提示
+        open2("已复制到剪切板")
     } catch (err) {
-        console.error('复制失败:', err);
+        open4(error)
     }
 };
 
@@ -76,7 +86,6 @@ const handlePageChange = (newPage) => {
         <div class="demo-collapse">
             <template v-if="name != '模拟数据'">
                 <el-collapse v-model="activeNames">
-
                     <!-- 如果是SQL代码就要多一个折叠面板 -->
                     <template v-if="language === 'insertSql'">
                         <el-collapse-item name="2">

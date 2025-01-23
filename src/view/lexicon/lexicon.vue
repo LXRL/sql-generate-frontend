@@ -53,7 +53,6 @@ const getSql = async (id) => {
     try {
         const res = await getLexSql(id)
         tableData.value = res
-        console.log("getSql", tableData.value)
     } catch (error) {
         console.log("获取数据失败", error);
     }
@@ -94,8 +93,9 @@ const getSql = async (id) => {
                                 :current-page="currentPage" @current-change="handlePageChange" />
                         </div>
                     </template>
+
                     <template v-slot:drInfo>
-                        <el-drawer v-model="tableShow" title="生成字典表成功">
+                        <el-drawer v-model="tableShow" title="生成字典表成功" style="width: 1200px">
                             <div class="result">
                                 <div class="text">
                                     <p>生成结果</p>

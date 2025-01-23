@@ -8,18 +8,18 @@ import { useFormStore } from '@/store/modules/formStore';
 import { useRouter } from 'vue-router';
 
 const formListStore = useFormList()
-const { tablePage } = storeToRefs(formListStore)
-formListStore.fetchGetTabPage()
-console.log(tablePage.value.data?.records)
+const { MyTablePage } = storeToRefs(formListStore)
+formListStore.fetchGetMyTanPage()
+console.log(MyTablePage.value.data?.records)
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => tablePage?.value.data?.records?.length);
+const totalRecords = computed(() => MyTablePage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return tablePage?.value.data?.records.slice(start, end);
+    return MyTablePage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理
@@ -29,8 +29,18 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref('');
 
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 // 导入 form
-const router = useRouter()
 const formStore = useFormStore();
 const form = formStore.form
 const setFormData = (content) => {
@@ -41,7 +51,7 @@ const setFormData = (content) => {
     form.tableComment = res.tableComment;
     form.mockNum = res.mockNum;
     form.fieldList = res.fieldList;
-    router.push('/generate')
+    open2('导入成功')
 }
 
 // key
@@ -56,7 +66,7 @@ const getName = (content) => {
         return fieldNames;
     } catch (error) {
         console.log("JSON parse error:", error);
-        return content; // 如果解析失败，返回原始内容
+        return content;
     }
 }
 // 日期
@@ -69,21 +79,22 @@ const getCopy = async (id) => {
     try {
         const res = await getTabSql(id)
         await navigator.clipboard.writeText(res.data.data);
-        alert('复制成功！'); // 可选：显示成功提示
+        open2("复制建表 SQL 成功")
 
     } catch (error) {
-        console.log("获取失败", error)
+        open4(error)
     }
 }
 
 // 删除
-const deleteShow = ref(Array(tablePage?.value.data?.records?.length).fill(false))
+const deleteShow = ref(Array(MyTablePage?.value.data?.records?.length).fill(false))
 const deletePage = async (id) => {
     try {
         await deleteMyTabPage(id)
         formListStore.fetchGetMyTabPage()
+        open2("删除成功")
     } catch (error) {
-        console.log("获取数据失败", error);
+        open4(error)
     }
 }
 </script>

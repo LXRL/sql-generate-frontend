@@ -9,14 +9,27 @@ const sign: signType = ref({})
 const onSubmit = async () => {
     try {
         const response = await getUserSign(sign.value)
+        open2()
         loginTo()
     } catch (error) {
-        console.log("获取用户信息错误", error)
+        open4(error)
     }
 }
 
 const router = useRouter()
 const loginTo = () => router.push('/login')
+
+// 消息提示
+const open2 = () => {
+    ElMessage({
+        message: '注册成功',
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 </script>
 <template>
     <div class="body">

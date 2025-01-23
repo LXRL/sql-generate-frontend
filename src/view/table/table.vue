@@ -12,7 +12,6 @@ import tableRight from './tableRight.vue';
 const formListStore = useFormList()
 const { tablePage } = storeToRefs(formListStore)
 formListStore.fetchGetTabPage()
-console.log(tablePage.value.data?.records)
 
 // 分页
 const currentPage = ref(1);
@@ -31,6 +30,17 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref('');
 
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 // 导入 form
 const router = useRouter()
 const formStore = useFormStore();
@@ -44,6 +54,7 @@ const setFormData = (content) => {
     form.mockNum = res.mockNum;
     form.fieldList = res.fieldList;
     router.push('/generate')
+    open2('导入成功')
 }
 
 // key
@@ -71,10 +82,10 @@ const getCopy = async (id) => {
     try {
         const res = await getTabSql(id)
         await navigator.clipboard.writeText(res.data.data);
-        alert('复制成功！'); // 可选：显示成功提示
+        open2('复制建表SQL成功')
 
     } catch (error) {
-        console.log("获取失败", error)
+        open4(error)
     }
 
 }

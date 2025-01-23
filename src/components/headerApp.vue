@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { logout } from '@/service';
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 import userLogin from '@/store/modules/login';
 import { storeToRefs } from 'pinia';
@@ -42,10 +42,23 @@ const loginStore = userLogin()
 const { isLoggedIn, userData } = storeToRefs(loginStore)
 const userName = ref('');
 const account = ref('');
-if (isLoggedIn) {
-    userName.value = userData?.value.data?.userAccount.charAt(0).toUpperCase()
-    account.value = userData?.value.data?.userAccount;
-}
+
+onMounted(() => {
+    if (isLoggedIn.value) {
+        userName.value = userData.value.data?.userAccount.charAt(0).toUpperCase();
+        account.value = userData.value.data?.userAccount;
+    }
+});
+
+watch([isLoggedIn, userData], ([newIsLoggedIn, newUserData]) => {
+    if (newIsLoggedIn) {
+        userName.value = newUserData?.data?.userAccount.charAt(0).toUpperCase();
+        account.value = newUserData?.data?.userAccount;
+    } else {
+        userName.value = '';
+        account.value = '';
+    }
+});
 
 // 登录
 const clickOut = async () => {

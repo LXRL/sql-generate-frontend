@@ -5,7 +5,7 @@ import { useFormStore } from '@/store/modules/formStore';
 import { useFormDataStore } from '@/store/modules/formData';
 import { AddMyTabPage, AddMyFiePage } from '@/service';
 import genFields from './genFields.vue';
-
+import draggable from 'vuedraggable';
 // Form
 const formStore = useFormStore();
 const form = formStore.form
@@ -103,17 +103,27 @@ const universalClick = () => {
         },
     );
 }
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 // submit 提交
 const formDataStore = useFormDataStore()
 const onSubmit = async () => {
     try {
         const response = await getGenSchema(form)
-        console.log(response)
         formDataStore.formData = response.data
-        console.log("formDataStore:", formDataStore.formData)
-        console.log("javaEntityCode:", formDataStore.formData.data.javaEntityCode)
+        open2('已生成')
+
     } catch (error) {
-        console.error('获取用户时出错:', error);
+        open4(error)
     }
 }
 
@@ -140,20 +150,32 @@ const saveForm = reactive<saveType>({
 });
 
 const saveContent = () => {
-    saveShow.value = true
-    saveForm.content = JSON.stringify(form)
+    if (form.fieldList.length > 0) {
+        saveShow.value = true
+        saveForm.content = JSON.stringify(form)
+    }
+    else {
+        open4('至少添加一个字段')
+    }
 }
 
 const saveSubmit = async () => {
     try {
         const res = await AddMyTabPage(saveForm)
         saveShow.value = false
+        open2('添加成功')
     } catch (error) {
-        console.log("创建失败", error)
+        open4(error)
     }
 }
 const reset = () => {
     saveForm.name = ''
+}
+// 复制配置
+const disposition = async () => {
+    const res = JSON.stringify(form)
+    await navigator.clipboard.writeText(res);
+    open2("已复制到剪切板")
 }
 //  导入字段
 const fieldsShow = ref<boolean>(false)
@@ -237,7 +259,6 @@ const fieldsReset = () => {
                                     <el-input v-model="item.onUpdate" placeholder="字段更新动作" />
                                 </el-form-item>
                                 <el-form-item>
-
                                     <el-checkbox :value="item.notNull" name="type" v-model="item.notNull">
                                         非空
                                     </el-checkbox>
@@ -252,7 +273,6 @@ const fieldsReset = () => {
                                         自增
                                     </el-checkbox>
                                 </el-form-item>
-
                                 <el-form-item label="字段类型:">
                                     <el-select v-model="item.mockType" placeholder="" size="large" style="width: 120px">
                                         <el-option v-for="item in fieldListOptions" :key="item" :label="item"
@@ -277,7 +297,6 @@ const fieldsReset = () => {
                                         <el-input v-model="item.mockParams" style="width: 130px;" />
                                     </template>
                                 </el-form-item>
-
                             </div>
                         </el-collapse-item>
                     </el-collapse>
@@ -295,7 +314,7 @@ const fieldsReset = () => {
             <el-form-item>
                 <el-button type="primary" @click="onSubmit" style="width: 200px;">一键生成</el-button>
                 <el-button @click="saveContent()">保存表</el-button>
-                <el-button>复制配置</el-button>
+                <el-button @click="disposition()">复制配置</el-button>
                 <el-button @click="resetClick()">重置</el-button>
             </el-form-item>
         </el-form>
@@ -374,6 +393,23 @@ const fieldsReset = () => {
                         width: 100%;
                         justify-content: space-between;
                         align-items: center;
+
+                        .buDiv {
+                            span {
+                                padding: 5px 10px;
+                                font-size: 14px;
+                                margin: 0 10px;
+                                color: #333;
+
+                                &:last-child {
+                                    color: red;
+                                }
+
+                                &:hover {
+                                    background-color: #F5F5F5;
+                                }
+                            }
+                        }
                     }
 
                     .el-collapse-item__content {

@@ -7,10 +7,22 @@ import { getGenAuto } from '@/service';
 import { getUploadExcelFile } from '@/service'
 import generateResult from './components/generateResult.vue';
 import genTable from './components/genTable.vue';
-import genFields from './components/genFields.vue';
+
 // Form
 const formStore = useFormStore();
 const form = formStore.form
+
+
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
 
 
 // brainPower 智能导入
@@ -20,12 +32,11 @@ const setBrain = () => content.value = "id,用户名,创建时间,更新时间,i
 const onSubmit = async () => {
     try {
         const response = await getGenAuto(content.value)
-        console.log(response)
+        open2("导入成功")
     } catch (error) {
-        console.log('获取用户时出错：', error);
+        open4(error)
     }
 }
-
 // tableShow 导入表
 const tableShow = ref<boolean>(false)
 
@@ -35,8 +46,8 @@ const dispositionShow = ref<boolean>(false)
 const setDisposition = () => {
     const exampleConfig = { "dbName": "shut_db", "tableName": "user", "tableComment": "用户表", "mockNum": 10, "fieldList": [{ "fieldName": "id", "fieldType": "bigint", "defaultValue": null, "notNull": true, "comment": "id", "primaryKey": true, "autoIncrement": true, "mockType": "递增", "mockParams": 0, "onUpdate": null }, { "fieldName": "username", "fieldType": "varchar(256)", "defaultValue": null, "notNull": true, "comment": "用户名", "primaryKey": false, "autoIncrement": false, "mockType": "随机", "mockParams": "人名", "onUpdate": null }, { "fieldName": "create_time", "fieldType": "datetime", "defaultValue": "CURRENT_TIMESTAMP", "notNull": true, "comment": "创建时间", "primaryKey": false, "autoIncrement": false, "mockType": "随机", "mockParams": "日期", "onUpdate": null }, { "fieldName": "update_time", "fieldType": "datetime", "defaultValue": "CURRENT_TIMESTAMP", "notNull": true, "comment": "更新时间", "primaryKey": false, "autoIncrement": false, "mockType": "随机", "mockParams": "日期", "onUpdate": "CURRENT_TIMESTAMP" }, { "fieldName": "is_deleted", "fieldType": "tinyint", "defaultValue": "0", "notNull": true, "comment": "是否删除(0-未删, 1-已删)", "primaryKey": false, "autoIncrement": false, "mockType": "固定", "mockParams": "0", "onUpdate": null }] }
     disposition.value = JSON.stringify(exampleConfig, null, 2);
-    console.log(disposition.value);
 }
+
 const getDisposition = () => {
     const parsedDisposition = JSON.parse(disposition.value);
     form.dbName = parsedDisposition.dbName;
@@ -45,6 +56,7 @@ const getDisposition = () => {
     form.mockNum = parsedDisposition.mockNum;
     form.fieldList = parsedDisposition.fieldList;
     dispositionShow.value = false
+    open2('导入成功')
 }
 
 // excel 导入Excel
@@ -59,8 +71,9 @@ const onFileChange = (event: Event) => {
             form.tableComment = response.data.data.tableComment;
             form.mockNum = response.data.data.mockNum;
             form.fieldList = response.data.data.fieldList;
+            open2("导入成功")
         }).catch(error => {
-            console.log('上传失败', error)
+            open4(error)
         })
     }
 }

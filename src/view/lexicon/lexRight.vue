@@ -57,19 +57,30 @@ const getSql = async (id) => {
     try {
         const res = await getLexSql(id)
         tableData.value = res
-        console.log("getSql", tableData.value)
     } catch (error) {
-        console.log("获取数据失败", error);
+        open4(error)
     }
 }
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 // 删除
 const deleteShow = ref(Array(MyFormPage?.value.data?.records?.length).fill(false))
 const deletePage = async (id) => {
     try {
         await deleteMyLexPage(id)
         formListStore.fetchGetMyLexPage()
+        open2('删除成功')
     } catch (error) {
-        console.log("获取数据失败", error);
+        open4(error)
     }
 }
 
@@ -81,7 +92,7 @@ const deletePage = async (id) => {
                 <p>个人词库</p>
                 <button class="Button" @click="addTo()">创建词库</button>
             </template>
-            <template v-slot:seInfo>
+            <template v-slot:seInfo v-if="isNull">
                 <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
                 <button class="Button">搜索</button>
             </template>
@@ -225,13 +236,13 @@ const deletePage = async (id) => {
 
     .null {
         width: 100%;
-        height: 100px;
+        height: 200px;
         display: flex;
         flex-direction: column;
         align-items: center;
 
         img {
-            width: 50px;
+            width: 100px;
         }
 
         p {

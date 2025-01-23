@@ -77,3 +77,7 @@
     width: 15px;
     margin-right: 10px;
 }
+
+.el-collapse button:hover {
+    color: #333;
+}

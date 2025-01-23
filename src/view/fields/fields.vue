@@ -41,15 +41,26 @@ const getTime = (time) => {
     return time.substring(0, 10);
 }
 
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 // 复制语句
 const getCopy = async (id) => {
     try {
         const res = await getFieSql(id)
         await navigator.clipboard.writeText(res.data.data);
-        alert('复制成功！'); // 可选：显示成功提示
+        open2('复制创建字段SQL成功')
 
     } catch (error) {
-        console.log("获取失败", error)
+        open4(error)
     }
 }
 

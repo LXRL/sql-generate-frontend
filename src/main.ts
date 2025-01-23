@@ -5,6 +5,9 @@ import App from './App.vue'
 import router from './router/index'
 // 全局样式 Css
 import "assets/css/index.css"
+// element
+import 'element-plus/dist/index.css'
+
 // 配置 Pinia
 import pinia from './store/index'
 // 配置 type

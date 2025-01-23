@@ -30,13 +30,24 @@ const updateContent = (selectedValue: string) => {
     const result = selectedItem ? selectedItem.content.replace(/[\[\]"]/g, '').replace(/,/g, ', ') : '';
     form.content = result
 };
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
 
 const onSubmit = async () => {
     try {
         const res = await AddMyLexPage(form)
+        open2("创建成功")
         resultTo()
     } catch (error) {
-        console.log("创建失败", error)
+        console.log(error)
     }
 }
 

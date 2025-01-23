@@ -6,7 +6,6 @@ import { getUserGetLogin } from '@/service/modules/user'
 import { useRouter } from 'vue-router';
 import userLogin from '@/store/modules/login';
 import { storeToRefs } from 'pinia';
-
 // 登录
 const login: loginType = ref({})
 const loginStore = userLogin()
@@ -16,15 +15,15 @@ const onSubmit = async () => {
     try {
         const response = await getUserLogin(login.value)
         const res = await getUserGetLogin()
-
         if (response.data.code === 0) {
             isLoggedIn.value = true
             userData.value = res.data
             console.log(userData)
         }
+        open2()
         genTo()
     } catch (error) {
-        console.log("获取用户信息错误", error)
+        open4(error)
     }
 }
 // 跳转
@@ -36,6 +35,17 @@ const genTo = () => router.push("/generate")
 const passWordShow = ref<boolean>(false)
 const changeShow = () => {
     passWordShow.value = !passWordShow.value
+}
+
+// 消息提示
+const open2 = () => {
+    ElMessage({
+        message: '登录成功',
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
 }
 
 </script>

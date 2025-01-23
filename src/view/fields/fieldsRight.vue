@@ -37,15 +37,26 @@ const getTime = (time) => {
     return time.substring(0, 10);
 }
 
+// 消息提示
+const open2 = (text) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error) => {
+    ElMessage.error(error)
+}
+
 // 复制语句
 const getCopy = async (id) => {
     try {
         const res = await getFieSql(id)
         await navigator.clipboard.writeText(res.data.data);
-        alert('复制成功！'); // 可选：显示成功提示
+        open2('复制创建字段SQL成功')
 
     } catch (error) {
-        console.log("获取失败", error)
+        open4(error)
     }
 }
 
@@ -70,8 +81,9 @@ const deletePage = async (id) => {
     try {
         await deleteMyFiePage(id)
         formListStore.fetchGetMyFiePage()
+        open2('删除成功')
     } catch (error) {
-        console.log("获取数据失败", error);
+        open4('删除失败')
     }
 }
 
@@ -84,7 +96,7 @@ const deletePage = async (id) => {
                 <p>个人字段</p>
                 <button class="Button">去创建</button>
             </template>
-            <template v-slot:seInfo>
+            <template v-slot:seInfo v-if="isNull">
                 <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
                 <button class="Button">搜索</button>
             </template>
@@ -233,13 +245,13 @@ const deletePage = async (id) => {
 
     .null {
         width: 100%;
-        height: 100px;
+        height: 200px;
         display: flex;
         flex-direction: column;
         align-items: center;
 
         img {
-            width: 50px;
+            width: 100px;
         }
 
         p {

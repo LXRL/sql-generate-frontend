@@ -4,20 +4,21 @@ import { storeToRefs } from 'pinia';
 import infoRight from '@/components/infoRight.vue';
 import useFormList from '@/store/modules/formList';
 import { getFieSql } from '@/service/modules/fields';
+import { useFormStore } from '@/store/modules/formStore';
 
 const formListStore = useFormList()
-const { fieldsPage } = storeToRefs(formListStore)
-formListStore.fetchGetFiePage()
-console.log(fieldsPage?.value.data?.records)
+const { MyFieldsPage } = storeToRefs(formListStore)
+formListStore.fetchGetMyFiePage()
+console.log(MyFieldsPage?.value.data?.records)
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => fieldsPage?.value.data?.records?.length);
+const totalRecords = computed(() => MyFieldsPage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return fieldsPage?.value.data?.records.slice(start, end);
+    return MyFieldsPage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理
@@ -26,6 +27,15 @@ const handlePageChange = (newPage: number) => {
 };
 // search
 const search = ref('');
+
+// 导入
+const formStore = useFormStore();
+const form = formStore.form
+const setFormData = (content) => {
+    const res = getContent(content);
+    console.log("123", res)
+    form.fieldList?.push(res)
+}
 
 
 // key
@@ -84,6 +94,7 @@ const judgmentK = (value) => {
                     <div class="daInfo">
                         <div class="name">
                             <h4>{{ item.name }}</h4> <span class="">官方</span>
+                            <button @click="setFormData(item.content)">导入</button>
                         </div>
                         <div class="filedList">
                             <div>表名: <span>{{ getContent(item.content).fieldName }}</span> </div>
