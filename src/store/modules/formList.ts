@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
-import { getLexPage } from '@/service/modules/lexicon'
+import { getDictPage } from '@/service/modules/dict'
 import { getTabPage } from '@/service/modules/table';
 import { getFiePage } from '@/service/modules/fields';
 
-import { getMyLexPage } from '@/service/modules/lexicon';
+import { getMyDictPage } from '@/service/modules/dict';
 import { getMyTabPage } from '@/service/modules/table';
 import { getMyFiePage } from '@/service/modules/fields';
 
@@ -21,8 +21,8 @@ const useFormList = defineStore("formList", {
     }),
     actions: {
         // 公开
-        async fetchGetLexPage() {
-            const res = await getLexPage()
+        async fetchgetDictPage() {
+            const res = await getDictPage()
             this.formPage = res.data
         },
         async fetchGetTabPage() {
@@ -35,8 +35,8 @@ const useFormList = defineStore("formList", {
         },
 
         // 个人
-        async fetchGetMyLexPage() {
-            const res = await getMyLexPage()
+        async fetchgetMyDictPage() {
+            const res = await getMyDictPage()
             this.MyFormPage = res.data
         },
         async fetchGetMyTanPage() {

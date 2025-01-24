@@ -14,13 +14,13 @@ const form = formStore.form
 
 
 // 消息提示
-const open2 = (text) => {
+const open2 = (text: any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error: any) => {
     ElMessage.error(error)
 }
 
@@ -58,6 +58,18 @@ const getDisposition = () => {
     dispositionShow.value = false
     open2('导入成功')
 }
+// sqlShow 导入建表Sql
+const tabSql = ref()
+const sqlShow = ref<boolean>(false)
+const setTabSql = () => {
+    const exampleConfig = " -- 用户表 create table if not exists user(id bigint not null auto_increment comment '主键' primary key, username varchar(256) not null comment '用户名',create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间',update_time datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',is_deleted tinyint default 0 not null comment '是否删除(0-未删, 1-已删)') comment '用户表'; "
+    tabSql.value = exampleConfig
+}
+const getTabSql = () => {
+    sqlShow.value = false
+    open2('导入成功')
+}
+
 
 // excel 导入Excel
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -108,7 +120,7 @@ const uploadFile = () => {
                                 @click="brainPowerShow = true">智能导入</button>
                             <button class="table Button" @click="tableShow = true">导入表</button>
                             <button class="disposition Button" @click="dispositionShow = true">导入配置</button>
-                            <button class="tableSQL Button">导入建表SQL</button>
+                            <button class="tableSQL Button" @click="sqlShow = true">导入建表SQL</button>
                             <div>
                                 <input type="file" @change="onFileChange" ref="fileInput" style="display: none;" />
                                 <button class="Excel Button" @click="uploadFile">导入Excel</button>
@@ -140,6 +152,7 @@ const uploadFile = () => {
                     <el-drawer v-model="tableShow" title="导入表">
                         <genTable></genTable>
                     </el-drawer>
+
                     <!-- 导入配置 -->
                     <el-dialog v-model="dispositionShow" title="导入配置" width="520" style="padding: 24px;">
                         <div class="header">请输入表结构JSON：<button class="Button" @click="setDisposition">导入示例</button>
@@ -157,6 +170,25 @@ const uploadFile = () => {
                             </div>
                         </template>
                     </el-dialog>
+
+                    <!-- 导入建表SQL -->
+                    <el-dialog v-model="sqlShow" title="导入建表 SQL" width="520" style="padding: 24px;">
+                        <div class="header">请输入建表 SQL 语句：<button class="Button" @click="setTabSql()">导入示例</button>
+                        </div>
+                        <el-form>
+                            <el-form-item>
+                                <el-input v-model="tabSql" style="height: 361px;" autocomplete="off"
+                                    placeholder="请输入配置JSON，可以从表单输入处复制" type="textarea" />
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button type="primary" @click="getTabSql()">导入</el-button>
+                                <el-button @click="tabSql = ''">重置</el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
+
                 </div>
             </template>
 

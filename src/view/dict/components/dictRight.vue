@@ -2,19 +2,19 @@
 import infoRight from '@/components/infoRight.vue';
 import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getLexSql, deleteMyLexPage } from '@/service';
+import { getDictSql, deleteMyDictPage } from '@/service';
 import useFormList from '@/store/modules/formList';
-import resultCode from './lexResult.vue';
+import resultCode from './AddResult.vue';
 import { useRouter } from 'vue-router'
 // 跳转
 const router = useRouter()
 const addTo = () => {
-    router.push('/lexAdd')
+    router.push('/dict/add')
 }
 
 const formListStore = useFormList()
 const { MyFormPage } = storeToRefs(formListStore)
-formListStore.fetchGetMyLexPage()
+formListStore.fetchgetMyDictPage()
 const isNull = computed(() => MyFormPage?.value.data?.records?.length)
 // 分页
 const currentPage = ref(1);
@@ -45,7 +45,7 @@ const getContent = (content: string) => {
     }
 }
 // 日期
-const getTime = (time) => {
+const getTime = (time: any) => {
     return time.substring(0, 10);
 }
 
@@ -53,22 +53,22 @@ const getTime = (time) => {
 const tableData = ref({})
 const tableShow = ref<boolean>(false)
 const activeName = ref('first')
-const getSql = async (id) => {
+const getSql = async (id: any) => {
     try {
-        const res = await getLexSql(id)
+        const res = await getDictSql(id)
         tableData.value = res
     } catch (error) {
         open4(error)
     }
 }
 // 消息提示
-const open2 = (text) => {
+const open2 = (text: any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error: any) => {
     ElMessage.error(error)
 }
 
@@ -76,8 +76,8 @@ const open4 = (error) => {
 const deleteShow = ref(Array(MyFormPage?.value.data?.records?.length).fill(false))
 const deletePage = async (id) => {
     try {
-        await deleteMyLexPage(id)
-        formListStore.fetchGetMyLexPage()
+        await deleteMyDictPage(id)
+        formListStore.fetchgetMyDictPage()
         open2('删除成功')
     } catch (error) {
         open4(error)

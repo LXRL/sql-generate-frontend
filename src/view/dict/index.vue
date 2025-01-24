@@ -3,101 +3,69 @@ import { ref, computed } from 'vue';
 import infoAll from '@/components/infoAll.vue';
 import infoLeft from '@/components/infoLeft.vue';
 import useFormList from '@/store/modules/formList';
+import resultCode from './components/dictResult.vue'
 import { storeToRefs } from 'pinia';
-import { getTabSql } from '@/service/modules/table';
-import { useFormStore } from '@/store/modules/formStore';
-import { useRouter } from 'vue-router';
-import tableRight from './tableRight.vue';
+import { getDictSql } from '@/service';
+import dictRight from './components/dictRight.vue';
 
 const formListStore = useFormList()
-const { tablePage } = storeToRefs(formListStore)
-formListStore.fetchGetTabPage()
+const { formPage } = storeToRefs(formListStore)
+formListStore.fetchgetDictPage()
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => tablePage?.value.data?.records?.length);
+const totalRecords = computed(() => formPage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return tablePage?.value.data?.records.slice(start, end);
+    return formPage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理
 const handlePageChange = (newPage: number) => {
     currentPage.value = newPage;
 };
+
 // search
 const search = ref('');
 
-// 消息提示
-const open2 = (text) => {
-    ElMessage({
-        message: text,
-        type: 'success',
-    })
-}
-const open4 = (error) => {
-    ElMessage.error(error)
-}
-
-// 导入 form
-const router = useRouter()
-const formStore = useFormStore();
-const form = formStore.form
-const setFormData = (content) => {
-    const res = getContent(content);
-    console.log(res)
-    form.dbName = res.dbName;
-    form.tableName = res.tableName;
-    form.tableComment = res.tableComment;
-    form.mockNum = res.mockNum;
-    form.fieldList = res.fieldList;
-    router.push('/generate')
-    open2('导入成功')
-}
-
-// key
-const getContent = (content) => {
-    const jsonObject = JSON.parse(content);
-    return jsonObject
-}
-const getName = (content) => {
+// 将内容数组转换为字符串
+const getContent = (content: string) => {
     try {
-        const jsonObject = JSON.parse(content);
-        const fieldNames = jsonObject.fieldList.map(item => item.fieldName).join(', ');
-        return fieldNames;
+        const parsedContent = JSON.parse(content);
+        return Array.isArray(parsedContent) ? parsedContent.join(', ') : parsedContent;
     } catch (error) {
-        console.log("JSON parse error:", error);
+        console.error("JSON parse error:", error);
         return content; // 如果解析失败，返回原始内容
     }
 }
 // 日期
-const getTime = (time) => {
+const getTime = (time:any) => {
     return time.substring(0, 10);
 }
 
-// 复制语句
-const getCopy = async (id) => {
+// tableShow 生成表
+const tableData = ref({})
+const tableShow = ref<boolean>(false)
+const activeName = ref('first')
+const getSql = async (id:any) => {
     try {
-        const res = await getTabSql(id)
-        await navigator.clipboard.writeText(res.data.data);
-        open2('复制建表SQL成功')
-
+        const res = await getDictSql(id)
+        tableData.value = res
     } catch (error) {
-        open4(error)
+        console.log("获取数据失败", error);
     }
-
 }
 </script>
 <template>
-    <div class="table">
-        <infoAll title="站在巨人的肩膀上，一键导入表并生成模拟数据！">
+    <div class="lexicon">
+        <infoAll title="使用现成的词库来生成特定数据，或用作研究数据集！">
             <template v-slot:conditions>
                 <infoLeft>
                     <template v-slot:heInfo>
-                        <p>公开表信息</p>
-                        <button class="Button">创建表</button>
+                        <p>公开词库</p>
+                        <button class="Button">创建词库</button>
                     </template>
                     <template v-slot:seInfo>
                         <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
@@ -107,19 +75,15 @@ const getCopy = async (id) => {
                         <template v-for="item in paginatedData" :key="item.name">
                             <div class="daInfo">
                                 <div class="name">
-                                    <h4>{{ item.name }}</h4> <span class="">官方</span>
-                                    <button @click="setFormData(item.content)">导入</button>
-                                </div>
-                                <div class="dbName">
-                                    <div>表名: <span>{{ getContent(item.content).tableName }}</span></div>
-                                    <div>表注释: <span>{{ getContent(item.content).tableComment }}</span> </div>
+                                    <p>{{ item.name }}</p> <span class="">官方</span>
                                 </div>
                                 <div class="annotation">
-                                    <p>字段列表: <span>{{ getName(item.content) }}</span></p>
+                                    <p>{{ getContent(item.content) }}</p>
+                                    <img src="@/assets/images/copy.png" alt="">
                                 </div>
                                 <div class="time">
                                     <p>{{ getTime(item.updateTime) }}</p>
-                                    <button class="bu" @click="getCopy(item.id)">复制语句</button>
+                                    <button @click="tableShow = true, getSql(item.id)">生成表</button>
                                     <button>举报</button>
                                 </div>
                             </div>
@@ -129,11 +93,38 @@ const getCopy = async (id) => {
                                 :current-page="currentPage" @current-change="handlePageChange" />
                         </div>
                     </template>
+
+                    <template v-slot:drInfo>
+                        <el-drawer v-model="tableShow" title="生成字典表成功" style="width: 1200px">
+                            <div class="result">
+                                <div class="text">
+                                    <p>生成结果</p>
+                                </div>
+                                <el-tabs v-model="activeName" class="demo-tabs">
+                                    <el-tab-pane label="SQL 代码" name="first">
+                                        <result-code language="insertSql" name="插入语句" :tableData="tableData" />
+                                    </el-tab-pane>
+                                    <el-tab-pane label="模拟数据" name="second">
+                                        <result-code language="dataJson" name="模拟数据" :tableData="tableData" />
+                                    </el-tab-pane>
+                                    <el-tab-pane label="JSON 数据" name="third">
+                                        <result-code language="dataJson" name="JSON数据" :tableData="tableData" />
+                                    </el-tab-pane>
+                                    <el-tab-pane label="Go代码" name="fourth">
+                                        <result-code language="goStructCode" name="Go结构体" :tableData="tableData" />
+                                    </el-tab-pane>
+                                    <el-tab-pane label="java代码" name="five">
+                                        <result-code language="javaEntityCode" name="实体代码" :tableData="tableData" />
+                                    </el-tab-pane>
+                                </el-tabs>
+                            </div>
+                        </el-drawer>
+                    </template>
                 </infoLeft>
             </template>
 
             <template v-slot:result>
-                <tableRight></tableRight>
+                <dictRight></dictRight>
             </template>
         </infoAll>
     </div>
@@ -141,13 +132,12 @@ const getCopy = async (id) => {
 
 
 <style lang="less" scoped>
-.table {
+.lexicon {
     .Button {
         padding: 5px 10px;
         color: white;
         background-color: #1890FF;
     }
-
 
     .daInfo {
         width: 100%;
@@ -162,11 +152,7 @@ const getCopy = async (id) => {
         }
 
         .name {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-
-            h4 {
+            p {
                 font-size: 16px;
                 margin-right: 7px !important;
             }
@@ -178,23 +164,6 @@ const getCopy = async (id) => {
                 border: 1px solid #D99521;
                 background-color: #FFFBE6;
             }
-
-            button {
-                padding: 5px 15px;
-                margin-left: auto;
-                border: 1px solid var(--underline-border-color);
-
-                &:hover {
-                    color: #1890FF;
-                    border: 1px solid #1890FF;
-                }
-            }
-        }
-
-        .dbName {
-            width: 340px;
-            display: flex;
-            justify-content: space-between;
         }
 
         .annotation {
@@ -204,6 +173,11 @@ const getCopy = async (id) => {
                 font-size: 14px;
                 color: #a6a6a6;
                 margin-right: 5px !important;
+            }
+
+            img {
+                cursor: pointer;
+                width: 20px;
             }
         }
 
@@ -253,5 +227,6 @@ const getCopy = async (id) => {
             line-height: 200px;
         }
     }
+
 }
 </style>

@@ -30,20 +30,20 @@ const handlePageChange = (newPage: number) => {
 const search = ref('');
 
 // 消息提示
-const open2 = (text) => {
+const open2 = (text:any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error:any) => {
     ElMessage.error(error)
 }
 
 // 导入 form
 const formStore = useFormStore();
 const form = formStore.form
-const setFormData = (content) => {
+const setFormData = (content:any) => {
     const res = getContent(content);
     console.log(res)
     form.dbName = res.dbName;
@@ -55,11 +55,11 @@ const setFormData = (content) => {
 }
 
 // key
-const getContent = (content) => {
+const getContent = (content:any) => {
     const jsonObject = JSON.parse(content);
     return jsonObject
 }
-const getName = (content) => {
+const getName = (content:any) => {
     try {
         const jsonObject = JSON.parse(content);
         const fieldNames = jsonObject.fieldList.map(item => item.fieldName).join(', ');
@@ -70,12 +70,12 @@ const getName = (content) => {
     }
 }
 // 日期
-const getTime = (time) => {
+const getTime = (time:any) => {
     return time.substring(0, 10);
 }
 
 // 复制语句
-const getCopy = async (id) => {
+const getCopy = async (id:any) => {
     try {
         const res = await getTabSql(id)
         await navigator.clipboard.writeText(res.data.data);
@@ -88,7 +88,7 @@ const getCopy = async (id) => {
 
 // 删除
 const deleteShow = ref(Array(MyTablePage?.value.data?.records?.length).fill(false))
-const deletePage = async (id) => {
+const deletePage = async (id:any) => {
     try {
         await deleteMyTabPage(id)
         formListStore.fetchGetMyTabPage()

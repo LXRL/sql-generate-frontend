@@ -26,7 +26,7 @@ const open2 = () => {
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error:any) => {
     ElMessage.error(error)
 }
 

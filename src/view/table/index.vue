@@ -4,22 +4,23 @@ import infoAll from '@/components/infoAll.vue';
 import infoLeft from '@/components/infoLeft.vue';
 import useFormList from '@/store/modules/formList';
 import { storeToRefs } from 'pinia';
-import { getFieSql } from '@/service/modules/fields';
-import fieldsRight from './fieldsRight.vue';
+import { getTabSql } from '@/service/modules/table';
+import { useFormStore } from '@/store/modules/formStore';
+import { useRouter } from 'vue-router';
+import tableRight from './tableRight.vue';
 
 const formListStore = useFormList()
-const { fieldsPage } = storeToRefs(formListStore)
-formListStore.fetchGetFiePage()
-console.log(fieldsPage?.value.data?.records)
+const { tablePage } = storeToRefs(formListStore)
+formListStore.fetchGetTabPage()
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => fieldsPage?.value.data?.records?.length);
+const totalRecords = computed(() => tablePage?.value.data?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return fieldsPage?.value.data?.records.slice(start, end);
+    return tablePage?.value.data?.records.slice(start, end);
 });
 
 // 分页变化处理
@@ -29,64 +30,74 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref('');
 
+// 消息提示
+const open2 = (text:any) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error:any) => {
+    ElMessage.error(error)
+}
+
+// 导入 form
+const router = useRouter()
+const formStore = useFormStore();
+const form = formStore.form
+const setFormData = (content) => {
+    const res = getContent(content);
+    console.log(res)
+    form.dbName = res.dbName;
+    form.tableName = res.tableName;
+    form.tableComment = res.tableComment;
+    form.mockNum = res.mockNum;
+    form.fieldList = res.fieldList;
+    router.push('/')
+    open2('导入成功')
+}
 
 // key
 const getContent = (content) => {
     const jsonObject = JSON.parse(content);
     return jsonObject
 }
-
+const getName = (content) => {
+    try {
+        const jsonObject = JSON.parse(content);
+        const fieldNames = jsonObject.fieldList.map(item => item.fieldName).join(', ');
+        return fieldNames;
+    } catch (error) {
+        console.log("JSON parse error:", error);
+        return content; // 如果解析失败，返回原始内容
+    }
+}
 // 日期
 const getTime = (time) => {
     return time.substring(0, 10);
 }
 
-// 消息提示
-const open2 = (text) => {
-    ElMessage({
-        message: text,
-        type: 'success',
-    })
-}
-const open4 = (error) => {
-    ElMessage.error(error)
-}
-
 // 复制语句
 const getCopy = async (id) => {
     try {
-        const res = await getFieSql(id)
+        const res = await getTabSql(id)
         await navigator.clipboard.writeText(res.data.data);
-        open2('复制创建字段SQL成功')
+        open2('复制建表SQL成功')
 
     } catch (error) {
         open4(error)
     }
-}
 
-// 判断
-const judgment = (value) => {
-    if (value)
-        return value
-    else return '无'
-}
-const judgmentZ = (value) => {
-    if (value) return '是'
-    else return '否'
-}
-const judgmentK = (value) => {
-    if (value) return '是'
-    else return '否'
 }
 </script>
 <template>
-    <div class="fields">
-        <infoAll title="参考或学习字段设计，高效完成建表！">
+    <div class="table">
+        <infoAll title="站在巨人的肩膀上，一键导入表并生成模拟数据！">
             <template v-slot:conditions>
                 <infoLeft>
                     <template v-slot:heInfo>
-                        <p>公开字段信息</p>
-                        <button class="Button">去创建</button>
+                        <p>公开表信息</p>
+                        <button class="Button">创建表</button>
                     </template>
                     <template v-slot:seInfo>
                         <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
@@ -97,18 +108,15 @@ const judgmentK = (value) => {
                             <div class="daInfo">
                                 <div class="name">
                                     <h4>{{ item.name }}</h4> <span class="">官方</span>
+                                    <button @click="setFormData(item.content)">导入</button>
                                 </div>
-                                <div class="filedList">
-                                    <div>表名: <span>{{ getContent(item.content).fieldName }}</span> </div>
-                                    <div>类型: <span>{{ getContent(item.content).fieldType }}</span></div>
-                                    <div>注释: <span>{{ getContent(item.content).comment }}</span></div>
-                                    <div>默认值: <span>{{ judgment(getContent(item.content).defaultValue) }}</span> </div>
-                                    <div>自增: <span>{{ judgmentZ(getContent(item.content).autoIncrement) }}</span></div>
-                                    <div>主键: <span>{{ judgmentZ(getContent(item.content).primaryKey) }}</span></div>
-                                    <div>非空: <span>{{ judgmentK(getContent(item.content).notNull) }}</span> </div>
-                                    <div>onUpDate: <span>{{ judgment(getContent(item.content).onUpdate) }}</span></div>
+                                <div class="dbName">
+                                    <div>表名: <span>{{ getContent(item.content).tableName }}</span></div>
+                                    <div>表注释: <span>{{ getContent(item.content).tableComment }}</span> </div>
                                 </div>
-
+                                <div class="annotation">
+                                    <p>字段列表: <span>{{ getName(item.content) }}</span></p>
+                                </div>
                                 <div class="time">
                                     <p>{{ getTime(item.updateTime) }}</p>
                                     <button class="bu" @click="getCopy(item.id)">复制语句</button>
@@ -125,7 +133,7 @@ const judgmentK = (value) => {
             </template>
 
             <template v-slot:result>
-                <fieldsRight></fieldsRight>
+                <tableRight></tableRight>
             </template>
         </infoAll>
     </div>
@@ -133,7 +141,7 @@ const judgmentK = (value) => {
 
 
 <style lang="less" scoped>
-.fields {
+.table {
     .Button {
         padding: 5px 10px;
         color: white;
@@ -183,17 +191,10 @@ const judgmentK = (value) => {
             }
         }
 
-        .filedList {
-            width: 700px;
+        .dbName {
+            width: 340px;
             display: flex;
-            flex-wrap: wrap;
-
-            div {
-                font-size: 14px;
-                width: 150px;
-                margin-right: 60px;
-                margin-bottom: 15px;
-            }
+            justify-content: space-between;
         }
 
         .annotation {

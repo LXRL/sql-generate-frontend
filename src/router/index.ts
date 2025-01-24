@@ -1,9 +1,9 @@
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router'
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
-        redirect: "/generate"
+        component: () => import("@/view/generate/index.vue")
     },
     {
         path: "/login",
@@ -20,32 +20,28 @@ const routes: Array<RouteRecordRaw> = [
         }
     },
     {
-        path: "/generate",
-        component: () => import("@/view/generate/generate.vue")
+        path: "/dict/all",
+        component: () => import("@/view/dict/index.vue")
     },
     {
-        path: "/lexicon",
-        component: () => import("@/view/lexicon/lexicon.vue")
+        path: "/dict/add",
+        component: () => import("@/view/dict/components/dictAdd.vue")
     },
     {
-        path: "/lexAdd",
-        component: () => import("@/view/lexicon/lexAdd.vue")
+        path: "/dict/add_result",
+        component: () => import("@/view/dict/components/AddResult.vue")
     },
     {
-        path: "/addResult",
-        component: () => import("@/view/lexicon/AddResult.vue")
+        path: "/table/all",
+        component: () => import("@/view/table/index.vue")
     },
     {
-        path: "/table",
-        component: () => import("@/view/table/table.vue")
-    },
-    {
-        path: "/fields",
-        component: () => import("@/view/fields/fields.vue")
+        path: "/fields/all",
+        component: () => import("@/view/fields/index.vue")
     }
 ]
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes
 })
 

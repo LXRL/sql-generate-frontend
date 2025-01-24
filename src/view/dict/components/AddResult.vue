@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 const router = useRouter()
-const lexTo = () => router.push('/lexicon')
-const addTo = () => router.push('/lexAdd')
+const lexTo = () => router.push('/dict/all')
+const addTo = () => router.push('/dict/add')
 
 </script>
 <template>

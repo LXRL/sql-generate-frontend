@@ -31,7 +31,7 @@ const search = ref('');
 // 导入
 const formStore = useFormStore();
 const form = formStore.form
-const setFormData = (content) => {
+const setFormData = (content:any) => {
     const res = getContent(content);
     console.log("123", res)
     form.fieldList?.push(res)
@@ -39,18 +39,18 @@ const setFormData = (content) => {
 
 
 // key
-const getContent = (content) => {
+const getContent = (content:any) => {
     const jsonObject = JSON.parse(content);
     return jsonObject
 }
 
 // 日期
-const getTime = (time) => {
+const getTime = (time:any) => {
     return time.substring(0, 10);
 }
 
 // 复制语句
-const getCopy = async (id) => {
+const getCopy = async (id:any) => {
     try {
         const res = await getFieSql(id)
         await navigator.clipboard.writeText(res.data.data);
@@ -62,16 +62,16 @@ const getCopy = async (id) => {
 }
 
 // 判断
-const judgment = (value) => {
+const judgment = (value:any) => {
     if (value)
         return value
     else return '无'
 }
-const judgmentZ = (value) => {
+const judgmentZ = (value:any) => {
     if (value) return '是'
     else return '否'
 }
-const judgmentK = (value) => {
+const judgmentK = (value:any) => {
     if (value) return '是'
     else return '否'
 }

@@ -43,18 +43,18 @@ const editorOptions = {
 };
 
 // 消息提示
-const open2 = (text) => {
+const open2 = (text:any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error:any) => {
     ElMessage.error(error)
 }
 
 // 复制到剪贴板的函数
-const copyToClipboard = async (data) => {
+const copyToClipboard = async (data:any) => {
     try {
         await navigator.clipboard.writeText(data);
 
@@ -75,7 +75,7 @@ const paginatedData = computed(() => {
     return codeDataList.value.slice(start, end);
 });
 // 分页变化处理
-const handlePageChange = (newPage) => {
+const handlePageChange = (newPage:any) => {
     currentPage.value = newPage;
 };
 

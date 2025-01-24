@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { getGenSchema } from '@/service/index';
 import { useFormStore } from '@/store/modules/formStore';
 import { useFormDataStore } from '@/store/modules/formData';
 import { AddMyTabPage, AddMyFiePage } from '@/service';
 import genFields from './genFields.vue';
-import draggable from 'vuedraggable';
 // Form
 const formStore = useFormStore();
 const form = formStore.form
@@ -104,13 +103,13 @@ const universalClick = () => {
     );
 }
 // 消息提示
-const open2 = (text) => {
+const open2 = (text: any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error: any) => {
     ElMessage.error(error)
 }
 
@@ -203,6 +202,7 @@ const fieldsSubmit = async () => {
 const fieldsReset = () => {
     fieldsForm.name = ''
 }
+
 </script>
 <template>
     <div class="Form">
@@ -274,16 +274,17 @@ const fieldsReset = () => {
                                     </el-checkbox>
                                 </el-form-item>
                                 <el-form-item label="字段类型:">
-                                    <el-select v-model="item.mockType" placeholder="" size="large" style="width: 120px">
+                                    <el-select v-model="item.mockType" size="large" style="width: 120px">
                                         <el-option v-for="item in fieldListOptions" :key="item" :label="item"
-                                            :value="item" />
+                                            :value="item" style="padding: 0 10px !important;" />
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item v-if="item.mockType != '不模拟'" :label="fieldTypeLabel(item.mockType)">
                                     <template v-if="item.mockType === '随机'">
                                         <el-select v-model="item.mockParams" placeholder="" size="large"
                                             style="width: 120px">
-                                            <el-option v-for="item in random" :key="item" :label="item" :value="item" />
+                                            <el-option v-for="item in random" :key="item" :label="item" :value="item"
+                                                style="padding: 0 10px !important;" />
                                         </el-select>
                                     </template>
                                     <template v-else-if="item.mockType === '递增'">

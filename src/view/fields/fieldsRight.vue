@@ -4,6 +4,8 @@ import { storeToRefs } from 'pinia';
 import infoRight from '@/components/infoRight.vue';
 import useFormList from '@/store/modules/formList';
 import { getFieSql, deleteMyFiePage } from '@/service';
+import { useRouter } from 'vue-router';
+
 const formListStore = useFormList()
 const { MyFieldsPage } = storeToRefs(formListStore)
 formListStore.fetchGetMyFiePage()
@@ -27,24 +29,24 @@ const search = ref('');
 
 
 // key
-const getContent = (content) => {
+const getContent = (content: any) => {
     const jsonObject = JSON.parse(content);
     return jsonObject
 }
 
 // 日期
-const getTime = (time) => {
+const getTime = (time: any) => {
     return time.substring(0, 10);
 }
 
 // 消息提示
-const open2 = (text) => {
+const open2 = (text: any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error: any) => {
     ElMessage.error(error)
 }
 
@@ -86,15 +88,18 @@ const deletePage = async (id) => {
         open4('删除失败')
     }
 }
-
+const router = useRouter()
+const genTo = () => {
+    router.push("/")
+}
 
 </script>
 <template>
     <div class="Right">
-        <infoRight>
+        <infoRight> 
             <template v-slot:heInfo>
                 <p>个人字段</p>
-                <button class="Button">去创建</button>
+                <button class="Button" @click="genTo()">去创建</button>
             </template>
             <template v-slot:seInfo v-if="isNull">
                 <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>

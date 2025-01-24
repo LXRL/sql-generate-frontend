@@ -2,12 +2,12 @@
 import { ref, reactive, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFormList from '@/store/modules/formList';
-import { AddMyLexPage } from '@/service'
+import { AddMyDictPage } from '@/service'
 import { useRouter } from 'vue-router';
 
 const formListStore = useFormList();
 const { MyFormPage } = storeToRefs(formListStore);
-formListStore.fetchGetMyLexPage();
+formListStore.fetchgetMyDictPage();
 
 type formType = {
     name: string;
@@ -31,19 +31,19 @@ const updateContent = (selectedValue: string) => {
     form.content = result
 };
 // 消息提示
-const open2 = (text) => {
+const open2 = (text:any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error:any) => {
     ElMessage.error(error)
 }
 
 const onSubmit = async () => {
     try {
-        const res = await AddMyLexPage(form)
+        const res = await AddMyDictPage(form)
         open2("创建成功")
         resultTo()
     } catch (error) {
@@ -59,7 +59,7 @@ const reset = () => {
 // 跳转
 const router = useRouter()
 const resultTo = () => {
-    router.push("/addResult")
+    router.push("/dict/add_result")
 }
 </script>
 

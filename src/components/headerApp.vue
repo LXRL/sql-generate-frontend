@@ -9,19 +9,19 @@ import { storeToRefs } from 'pinia';
 const navList = ref<{ name: string; path: string }[]>([
     {
         name: '代码生成',
-        path: '/generate'
+        path: '/'
     },
     {
         name: '词库大全',
-        path: '/lexicon'
+        path: '/dict/all'
     },
     {
         name: '表大全',
-        path: '/table'
+        path: '/table/all'
     },
     {
         name: '字段大全',
-        path: '/fields'
+        path: '/fields/all'
     },
 ])
 // active 样式判断

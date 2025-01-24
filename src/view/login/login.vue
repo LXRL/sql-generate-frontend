@@ -29,7 +29,7 @@ const onSubmit = async () => {
 // 跳转
 const router = useRouter()
 const signTo = () => router.push("/sign")
-const genTo = () => router.push("/generate")
+const genTo = () => router.push("/")
 
 // 密码显示隐藏
 const passWordShow = ref<boolean>(false)
@@ -44,7 +44,7 @@ const open2 = () => {
         type: 'success',
     })
 }
-const open4 = (error) => {
+const open4 = (error:any) => {
     ElMessage.error(error)
 }
 
