@@ -6,7 +6,7 @@ export function getTabPage() {
     })
 }
 
-export function getTabSql(params) {
+export function getTabSql(params: any) {
     return hyRequest.post({
         url: 'table_info/generate/sql',
         data: params
@@ -19,14 +19,14 @@ export function getMyTabPage() {
     })
 }
 
-export function deleteMyTabPage(params) {
+export function deleteMyTabPage(params: any) {
     return hyRequest.post({
         url: 'table_info/delete',
         data: { id: params }
     })
 }
 
-export function AddMyTabPage(params) {
+export function AddMyTabPage(params: any) {
     return hyRequest.post({
         url: 'table_info/add',
         data: { name: params.name, content: params.content }

@@ -2,7 +2,7 @@
 import infoRight from '@/components/infoRight.vue';
 import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { getDictSql, deleteMyDictPage } from '@/service';
+import { getDictSql, deleteMyDictPage } from '@/api';
 import useFormList from '@/store/modules/formList';
 import resultCode from './AddResult.vue';
 import { useRouter } from 'vue-router'
@@ -15,15 +15,15 @@ const addTo = () => {
 const formListStore = useFormList()
 const { MyFormPage } = storeToRefs(formListStore)
 formListStore.fetchgetMyDictPage()
-const isNull = computed(() => MyFormPage?.value.data?.records?.length)
+const isNull = computed(() => MyFormPage?.value?.records?.length)
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => MyFormPage?.value.data?.records?.length);
+const totalRecords = computed(() => MyFormPage?.value?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return MyFormPage?.value.data?.records.slice(start, end);
+    return MyFormPage?.value?.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -56,7 +56,7 @@ const activeName = ref('first')
 const getSql = async (id: any) => {
     try {
         const res = await getDictSql(id)
-        tableData.value = res
+        tableData.value = res.data
     } catch (error) {
         open4(error)
     }
@@ -73,7 +73,7 @@ const open4 = (error: any) => {
 }
 
 // 删除
-const deleteShow = ref(Array(MyFormPage?.value.data?.records?.length).fill(false))
+const deleteShow = ref(Array(MyFormPage?.value.records?.length).fill(false))
 const deletePage = async (id) => {
     try {
         await deleteMyDictPage(id)

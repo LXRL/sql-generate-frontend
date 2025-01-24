@@ -26,9 +26,9 @@ const codeDataList = ref([])
 watch(
     () => formDataStore.formData,
     (newFormData) => {
-        codeText.value = newFormData?.data?.[props.language] || '';
-        codeTextSql.value = newFormData?.data?.createSql || '';
-        codeDataList.value = newFormData?.data?.dataList || [];
+        codeText.value = newFormData?.[props.language] || '';
+        codeTextSql.value = newFormData?.createSql || '';
+        codeDataList.value = newFormData?.dataList || [];
     },
     { immediate: true } // 立即执行以确保初始加载时也能获取数据
 );

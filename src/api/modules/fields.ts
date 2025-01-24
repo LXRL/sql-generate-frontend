@@ -5,7 +5,7 @@ export function getFiePage() {
         url: 'field_info/list/page',
     })
 }
-export function getFieSql(params) {
+export function getFieSql(params: any) {
     return hyRequest.post({
         url: 'field_info/generate/sql',
         data: params
@@ -18,13 +18,13 @@ export function getMyFiePage() {
     })
 }
 
-export function deleteMyFiePage(params) {
+export function deleteMyFiePage(params: any) {
     return hyRequest.post({
         url: 'field_info/delete',
         data: { id: params }
     })
 }
-export function AddMyFiePage(params) {
+export function AddMyFiePage(params: any) {
     return hyRequest.post({
         url: 'field_info/add',
         data: { name: params.name, content: params.content }

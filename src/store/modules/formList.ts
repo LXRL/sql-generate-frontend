@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
-import { getDictPage } from '@/service/modules/dict'
-import { getTabPage } from '@/service/modules/table';
-import { getFiePage } from '@/service/modules/fields';
+import { getDictPage } from '@/api/modules/dict'
+import { getTabPage } from '@/api/modules/table';
+import { getFiePage } from '@/api/modules/fields';
 
-import { getMyDictPage } from '@/service/modules/dict';
-import { getMyTabPage } from '@/service/modules/table';
-import { getMyFiePage } from '@/service/modules/fields';
+import { getMyDictPage } from '@/api/modules/dict';
+import { getMyTabPage } from '@/api/modules/table';
+import { getMyFiePage } from '@/api/modules/fields';
 
 const useFormList = defineStore("formList", {
     state: () => ({

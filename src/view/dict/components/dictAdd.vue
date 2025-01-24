@@ -2,7 +2,7 @@
 import { ref, reactive, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFormList from '@/store/modules/formList';
-import { AddMyDictPage } from '@/service'
+import { AddMyDictPage } from '@/api'
 import { useRouter } from 'vue-router';
 
 const formListStore = useFormList();
@@ -22,7 +22,7 @@ const Data = ref<string | null>(null);
 const option = ref<any[]>([]);
 
 watch(MyFormPage, (newValue) => {
-    option.value = newValue?.data?.records || [];
+    option.value = newValue?.records || [];
 });
 
 const updateContent = (selectedValue: string) => {

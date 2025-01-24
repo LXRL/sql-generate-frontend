@@ -25,4 +25,5 @@ export default defineConfig({
       'assets': resolve(__dirname, './src/assets'),
     }
   },
+  logLevel: 'info',
 });
