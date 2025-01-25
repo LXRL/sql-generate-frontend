@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 
 const formListStore = useFormList();
 const { MyFormPage } = storeToRefs(formListStore);
-formListStore.fetchgetMyDictPage();
+formListStore.fetchGetMyDictPage();
 
 type formType = {
     name: string;

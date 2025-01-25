@@ -3,6 +3,8 @@ import { ref, watch, computed } from 'vue';
 import { useFormDataStore } from '@/store/modules/formData';
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const props = defineProps({
     language: {
@@ -40,16 +42,52 @@ const editorOptions = {
     lineNumbers: true,
 };
 
+// 消息提示
+const open2 = (text: any) => {
+    ElMessage({
+        message: text,
+        type: 'success',
+    })
+}
+const open4 = (error: any) => {
+    ElMessage.error(error)
+}
+
+
+// 复制全部
+const copyAll = async () => {
+    try {
+        const all = codeTextSql.value + codeText.value
+        await navigator.clipboard.writeText(all);
+        open2("已复制到剪切板")
+    } catch (error) {
+        open4(error)
+    }
+}
+
 // 复制到剪贴板的函数
-const copyToClipboard = async (data:any) => {
+const copyToClipboard = async (data: any) => {
     try {
         await navigator.clipboard.writeText(data);
-
-        alert('复制成功！'); // 可选：显示成功提示
-    } catch (err) {
-        console.error('复制失败:', err);
+        open2("已复制到剪切板")
+    } catch (error) {
+        open4(error)
     }
 };
+
+// 下载数据
+const download = () => {
+    // 将JSON数据转换为工作表
+    const workSheet = XLSX.utils.json_to_sheet(codeDataList.value)
+    // 建一个新的工作簿
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, workSheet, 'sheet1')
+    // 生成 Excel 文件并下载
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' })
+    saveAs(blob, 'data.xlsx')
+
+}
 
 // 分页
 const keys = computed(() => Object.keys(codeDataList.value[0] || {}));
@@ -62,18 +100,19 @@ const paginatedData = computed(() => {
     return codeDataList.value.slice(start, end);
 });
 // 分页变化处理
-const handlePageChange = (newPage:any) => {
+const handlePageChange = (newPage: any) => {
     currentPage.value = newPage;
 };
 
 </script>
 <template>
     <template v-if="codeText">
-        <button class="button">复制全部</button>
+        <button class="button" v-if="name === '插入语句'" @click="copyAll()">复制全部</button>
+        <button class="button" v-else-if="name === '模拟数据'" @click="download()">下载数据</button>
+
         <div class="demo-collapse">
             <template v-if="name != '模拟数据'">
                 <el-collapse v-model="activeNames">
-
                     <!-- 如果是SQL代码就要多一个折叠面板 -->
                     <template v-if="language === 'insertSql'">
                         <el-collapse-item name="2">
@@ -89,7 +128,7 @@ const handlePageChange = (newPage:any) => {
                             </div>
                         </el-collapse-item>
                     </template>
-                    
+
                     <el-collapse-item name="1">
                         <template #title>
                             <div class="collText"> {{ name }} <button class="collButton"
@@ -110,7 +149,7 @@ const handlePageChange = (newPage:any) => {
             <template v-else>
                 <div class="example-pagination-block">
                     <div class="example-demonstration">
-                        <el-table :data="paginatedData" border style="width: 100%">
+                        <el-table :data="paginatedData" style="width: 100%">
                             <template v-for="key in keys">
                                 <el-table-column :prop="key" :label="key" width="130" />
                             </template>
@@ -120,6 +159,7 @@ const handlePageChange = (newPage:any) => {
                         :current-page.sync="currentPage" @current-change="handlePageChange" />
                 </div>
             </template>
+
         </div>
     </template>
 </template>

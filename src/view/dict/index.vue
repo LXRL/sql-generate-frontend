@@ -7,10 +7,11 @@ import resultCode from './components/dictResult.vue'
 import { storeToRefs } from 'pinia';
 import { getDictSql } from '@/service';
 import dictRight from './components/dictRight.vue';
+import { useRouter } from 'vue-router';
 
 const formListStore = useFormList()
 const { formPage } = storeToRefs(formListStore)
-formListStore.fetchgetDictPage()
+formListStore.fetchGetDictPage()
 
 // 分页
 const currentPage = ref(1);
@@ -41,7 +42,7 @@ const getContent = (content: string) => {
     }
 }
 // 日期
-const getTime = (time:any) => {
+const getTime = (time: any) => {
     return time.substring(0, 10);
 }
 
@@ -49,7 +50,7 @@ const getTime = (time:any) => {
 const tableData = ref({})
 const tableShow = ref<boolean>(false)
 const activeName = ref('first')
-const getSql = async (id:any) => {
+const getSql = async (id: any) => {
     try {
         const res = await getDictSql(id)
         tableData.value = res
@@ -57,6 +58,13 @@ const getSql = async (id:any) => {
         console.log("获取数据失败", error);
     }
 }
+
+// 跳转
+const router = useRouter()
+const addTo = () => {
+    router.push('/dict/add')
+}
+
 </script>
 <template>
     <div class="lexicon">
@@ -65,7 +73,7 @@ const getSql = async (id:any) => {
                 <infoLeft>
                     <template v-slot:heInfo>
                         <p>公开词库</p>
-                        <button class="Button">创建词库</button>
+                        <button class="Button" @click="addTo()">创建词库</button>
                     </template>
                     <template v-slot:seInfo>
                         <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
@@ -101,7 +109,7 @@ const getSql = async (id:any) => {
                                     <p>生成结果</p>
                                 </div>
                                 <el-tabs v-model="activeName" class="demo-tabs">
-                                    <el-tab-pane label="SQL 代码" name="first">
+                                    <el-tab-pane label="SQL代码" name="first">
                                         <result-code language="insertSql" name="插入语句" :tableData="tableData" />
                                     </el-tab-pane>
                                     <el-tab-pane label="模拟数据" name="second">

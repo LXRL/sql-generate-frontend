@@ -31,13 +31,13 @@ const handlePageChange = (newPage: number) => {
 const search = ref('');
 
 // 消息提示
-const open2 = (text:any) => {
+const open2 = (text: any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error:any) => {
+const open4 = (error: any) => {
     ElMessage.error(error)
 }
 
@@ -87,7 +87,9 @@ const getCopy = async (id) => {
     } catch (error) {
         open4(error)
     }
-
+}
+const generateTo = () => {
+    router.push('/')
 }
 </script>
 <template>
@@ -97,7 +99,7 @@ const getCopy = async (id) => {
                 <infoLeft>
                     <template v-slot:heInfo>
                         <p>公开表信息</p>
-                        <button class="Button">创建表</button>
+                        <button class="Button" @click="generateTo()">创建表</button>
                     </template>
                     <template v-slot:seInfo>
                         <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>

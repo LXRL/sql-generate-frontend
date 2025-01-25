@@ -21,7 +21,7 @@ const useFormList = defineStore("formList", {
     }),
     actions: {
         // 公开
-        async fetchgetDictPage() {
+        async fetchGetDictPage() {
             const res = await getDictPage()
             this.formPage = res.data
         },
@@ -35,7 +35,7 @@ const useFormList = defineStore("formList", {
         },
 
         // 个人
-        async fetchgetMyDictPage() {
+        async fetchGetMyDictPage() {
             const res = await getMyDictPage()
             this.MyFormPage = res.data
         },

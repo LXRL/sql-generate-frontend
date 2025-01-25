@@ -4,7 +4,7 @@ import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { getDictSql, deleteMyDictPage } from '@/service';
 import useFormList from '@/store/modules/formList';
-import resultCode from './AddResult.vue';
+import resultCode from './dictResult.vue';
 import { useRouter } from 'vue-router'
 // 跳转
 const router = useRouter()
@@ -14,7 +14,7 @@ const addTo = () => {
 
 const formListStore = useFormList()
 const { MyFormPage } = storeToRefs(formListStore)
-formListStore.fetchgetMyDictPage()
+formListStore.fetchGetMyDictPage()
 const isNull = computed(() => MyFormPage?.value.data?.records?.length)
 // 分页
 const currentPage = ref(1);
@@ -138,6 +138,7 @@ const deletePage = async (id) => {
                         :current-page="currentPage" @current-change="handlePageChange" />
                 </div>
             </template>
+
             <template v-slot:drInfo>
                 <el-drawer v-model="tableShow" title="生成字典表成功">
                     <div class="result">

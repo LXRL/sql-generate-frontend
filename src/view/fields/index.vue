@@ -6,6 +6,7 @@ import useFormList from '@/store/modules/formList';
 import { storeToRefs } from 'pinia';
 import { getFieSql } from '@/service/modules/fields';
 import fieldsRight from './fieldsRight.vue';
+import { useRouter } from 'vue-router';
 
 const formListStore = useFormList()
 const { fieldsPage } = storeToRefs(formListStore)
@@ -31,29 +32,29 @@ const search = ref('');
 
 
 // key
-const getContent = (content:any) => {
+const getContent = (content: any) => {
     const jsonObject = JSON.parse(content);
     return jsonObject
 }
 
 // 日期
-const getTime = (time:any) => {
+const getTime = (time: any) => {
     return time.substring(0, 10);
 }
 
 // 消息提示
-const open2 = (text:any) => {
+const open2 = (text: any) => {
     ElMessage({
         message: text,
         type: 'success',
     })
 }
-const open4 = (error:any) => {
+const open4 = (error: any) => {
     ElMessage.error(error)
 }
 
 // 复制语句
-const getCopy = async (id:any) => {
+const getCopy = async (id: any) => {
     try {
         const res = await getFieSql(id)
         await navigator.clipboard.writeText(res.data.data);
@@ -65,18 +66,22 @@ const getCopy = async (id:any) => {
 }
 
 // 判断
-const judgment = (value:any) => {
+const judgment = (value: any) => {
     if (value)
         return value
     else return '无'
 }
-const judgmentZ = (value:any) => {
+const judgmentZ = (value: any) => {
     if (value) return '是'
     else return '否'
 }
-const judgmentK = (value:any) => {
+const judgmentK = (value: any) => {
     if (value) return '是'
     else return '否'
+}
+const router = useRouter()
+const generateTo = () => {
+    router.push('/')
 }
 </script>
 <template>
@@ -86,7 +91,7 @@ const judgmentK = (value:any) => {
                 <infoLeft>
                     <template v-slot:heInfo>
                         <p>公开字段信息</p>
-                        <button class="Button">去创建</button>
+                        <button class="Button" @click="generateTo()">去创建</button>
                     </template>
                     <template v-slot:seInfo>
                         <el-input v-model="search" placeholder="请输入名称" style="width: 200px;"></el-input>
