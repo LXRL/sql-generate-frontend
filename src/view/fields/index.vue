@@ -4,23 +4,23 @@ import infoAll from '@/components/infoAll.vue';
 import infoLeft from '@/components/infoLeft.vue';
 import useFormList from '@/store/modules/formList';
 import { storeToRefs } from 'pinia';
-import { getFieSql } from '@/service/modules/fields';
+import { getFieSql } from '@/api/modules/fields';
 import fieldsRight from './fieldsRight.vue';
 import { useRouter } from 'vue-router';
 
 const formListStore = useFormList()
 const { fieldsPage } = storeToRefs(formListStore)
 formListStore.fetchGetFiePage()
-console.log(fieldsPage?.value.data?.records)
+console.log(fieldsPage?.value.records)
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => fieldsPage?.value.data?.records?.length);
+const totalRecords = computed(() => fieldsPage?.value?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return fieldsPage?.value.data?.records.slice(start, end);
+    return fieldsPage?.value?.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -57,7 +57,7 @@ const open4 = (error: any) => {
 const getCopy = async (id: any) => {
     try {
         const res = await getFieSql(id)
-        await navigator.clipboard.writeText(res.data.data);
+        await navigator.clipboard.writeText(res.data);
         open2('复制创建字段SQL成功')
 
     } catch (error) {

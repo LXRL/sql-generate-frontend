@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
-import type { FormFieldList, FormType } from '../../types';
+import type { FormFieldList, FormType } from '../../../types';
 import { set } from 'lodash';
 
-export const useFormStore = defineStore('form', {
+export const usGenerateStore = defineStore('generate', {
     state: (): FormType => ({
         dbName: 'library',
         tableName: 'test_table',

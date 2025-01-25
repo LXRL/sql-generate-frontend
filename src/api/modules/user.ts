@@ -1,32 +1,26 @@
 import hyRequest from '../request/index'
 
-export function getUserLogin(params) {
+export function postUserLogin(params: any) {
     return hyRequest.post({
         url: 'user/login',
         data: params,
     })
 }
 
-export function getUserGetLogin() {
+export function getUserInfo() {
     return hyRequest.get({
         url: 'user/get/login',
     })
 }
 
-export function getUserSign(params) {
+export function postUserRegister(params: any) {
     return hyRequest.post({
         url: 'user/register',
         data: params,
     })
 }
 
-export function getUser() {
-    return hyRequest.get({
-        url: 'user/login/user',
-    })
-}
-
-export function logout() {
+export function postUserlogout() {
     return hyRequest.post({
         url: 'user/logout',
     })
