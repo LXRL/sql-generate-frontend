@@ -6,6 +6,7 @@ import { getDictSql, deleteMyDictPage } from '@/api';
 import useFormList from '@/store/modules/formList';
 import resultCode from './dictResult.vue';
 import { useRouter } from 'vue-router'
+import { useMessage } from '@/hook/useMessage';
 // 跳转
 const router = useRouter()
 const addTo = () => {
@@ -15,7 +16,7 @@ const addTo = () => {
 const formListStore = useFormList()
 const { MyFormPage } = storeToRefs(formListStore)
 formListStore.fetchGetMyDictPage()
-const isNull = computed(() => MyFormPage?.value.data?.records?.length)
+const isNull = computed(() => MyFormPage?.value?.records?.length)
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
@@ -58,29 +59,19 @@ const getSql = async (id: any) => {
         const res = await getDictSql(id)
         tableData.value = res.data
     } catch (error) {
-        open4(error)
+        useMessage.failed(error)
     }
-}
-// 消息提示
-const open2 = (text: any) => {
-    ElMessage({
-        message: text,
-        type: 'success',
-    })
-}
-const open4 = (error: any) => {
-    ElMessage.error(error)
 }
 
 // 删除
-const deleteShow = ref(Array(MyFormPage?.value.records?.length).fill(false))
-const deletePage = async (id) => {
+const deleteShow = ref(Array(MyFormPage?.value?.records?.length).fill(false))
+const deletePage = async (id: any) => {
     try {
         await deleteMyDictPage(id)
-        formListStore.fetchgetMyDictPage()
-        open2('删除成功')
+        formListStore.fetchGetMyDictPage()
+        useMessage.success("删除成功")
     } catch (error) {
-        open4(error)
+        useMessage.failed(error)
     }
 }
 

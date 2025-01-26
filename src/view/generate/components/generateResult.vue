@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import resultCode from './resultCode.vue'
 import { useFormDataStore } from '@/store/modules/formData';
+
 const activeName = ref('first')
 const formDataStore = useFormDataStore()
 const hasData = computed(() => {

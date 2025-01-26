@@ -7,6 +7,7 @@ import { storeToRefs } from 'pinia';
 import { getFieSql } from '@/api/modules/fields';
 import fieldsRight from './fieldsRight.vue';
 import { useRouter } from 'vue-router';
+import { useMessage } from '@/hook/useMessage';
 
 const formListStore = useFormList()
 const { fieldsPage } = storeToRefs(formListStore)
@@ -42,26 +43,17 @@ const getTime = (time: any) => {
     return time.substring(0, 10);
 }
 
-// 消息提示
-const open2 = (text: any) => {
-    ElMessage({
-        message: text,
-        type: 'success',
-    })
-}
-const open4 = (error: any) => {
-    ElMessage.error(error)
-}
+
 
 // 复制语句
 const getCopy = async (id: any) => {
     try {
         const res = await getFieSql(id)
         await navigator.clipboard.writeText(res.data);
-        open2('复制创建字段SQL成功')
+        useMessage.success("复制创建字段SQL成功")
 
     } catch (error) {
-        open4(error)
+        useMessage.failed(error)
     }
 }
 
@@ -189,7 +181,7 @@ const generateTo = () => {
         }
 
         .filedList {
-            width: 700px;
+            width: 100%;
             display: flex;
             flex-wrap: wrap;
 

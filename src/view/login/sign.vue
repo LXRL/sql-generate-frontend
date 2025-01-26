@@ -18,6 +18,7 @@ const onSubmit = async () => {
   await userLoginStore.fetchUserRegister(sign.value);
   loginTo();
 };
+
 </script>
 
 <template>
@@ -31,38 +32,38 @@ const onSubmit = async () => {
       <div class="info">
         <el-form :model="sign" label-width="auto">
           <div class="userAccount">
-            <img class="icon" src="" alt="" />
-            <input v-model="sign.userAccount" placeholder="请输入账号" />
-            <img class="icon" src="" alt="" />
+            <el-input v-model="sign.userAccount" placeholder="请输入账号" clearable>
+              <template #prefix>
+                <img class="icon" src="@/assets/images/login_login.png" alt="" />
+              </template>
+            </el-input>
           </div>
           <div class="userAccount">
-            <img class="icon" src="" alt="" />
-            <input
-              v-model="sign.userName"
-              placeholder="请输入用户名(至少4位)"
-            />
-            <img class="icon" src="" alt="" />
+            <el-input v-model="sign.userName" placeholder="请输入用户名(至少四个字)" clearable>
+              <template #prefix>
+                <img class="icon" src="@/assets/images/login_login.png" alt="" />
+              </template>
+            </el-input>
           </div>
           <div class="userPassword">
-            <img class="icon" src="" alt="" />
-            <input
-              v-model="sign.userPassword"
-              placeholder="请输入密码(至少8位)"
-            />
-            <img class="icon" src="" alt="" />
+            <el-input v-model="sign.userPassword" placeholder="请输入密码" type="password" show-password>
+              <template #prefix>
+                <img class="icon" src="@/assets/images/login_lock.png" alt="" />
+              </template>
+            </el-input>
           </div>
           <div class="userPassword">
-            <img class="icon" src="" alt="" />
-            <input v-model="sign.checkPassword" />
-            <img class="icon" src="" alt="" />
+            <el-input v-model="sign.checkPassword" placeholder="请输入确认密码" type="password" show-password>
+              <template #prefix>
+                <img class="icon" src="@/assets/images/login_lock.png" alt="" />
+              </template>
+            </el-input>
           </div>
           <div class="sign">
             <div @click="loginTo">老用户登录</div>
           </div>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit" style="width: 100%"
-              >注册</el-button
-            >
+            <el-button type="primary" @click="onSubmit" style="width: 100%">注册</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -105,22 +106,10 @@ const onSubmit = async () => {
     }
 
     .info {
+
       .userAccount,
       .userPassword {
-        display: flex;
-        padding: 11px;
-        border: 1px solid var(--underline-border-color);
-        align-items: center;
         margin-bottom: 16px;
-
-        input {
-          width: 268px;
-          height: 25px;
-          border: none;
-          outline: none;
-          background-color: #e8f0fe;
-          margin: 0 5px;
-        }
 
         .icon {
           width: 16px;

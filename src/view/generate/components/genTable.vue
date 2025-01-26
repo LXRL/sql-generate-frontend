@@ -5,11 +5,11 @@ import useFormList from "@/store/modules/formList";
 import { storeToRefs } from "pinia";
 import { getTabSql, deleteMyTabPage } from "@/api/modules/table";
 import { useFormStore } from "@/store/modules/formStore";
+import { useMessage } from "@/hook/useMessage";
 
 const formListStore = useFormList();
 const { MyTablePage } = storeToRefs(formListStore);
 formListStore.fetchGetMyTanPage();
-console.log(MyTablePage.value.records);
 
 // 分页
 const currentPage = ref(1);
@@ -28,26 +28,16 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref("");
 
-// 消息提示
-const open2 = (text: any) => {
-  ElMessage({
-    message: text,
-    type: "success",
-  });
-};
-const open4 = (error: any) => {
-  ElMessage.error(error);
-};
+
 
 // 导入 form
 const formStore = useFormStore();
 const setFormData = (content: any) => {
   const res = getContent(content);
-  console.log("zhsahut setFormData res", res);
   formStore.updateState({
     ...res,
   });
-  open2("导入成功");
+  useMessage.success("导入成功");
 };
 
 // key
@@ -63,7 +53,6 @@ const getName = (content: any) => {
       .join(", ");
     return fieldNames;
   } catch (error) {
-    console.log("JSON parse error:", error);
     return content;
   }
 };
@@ -77,9 +66,9 @@ const getCopy = async (id: any) => {
   try {
     const res = await getTabSql(id);
     await navigator.clipboard.writeText(res.data);
-    open2("复制建表 SQL 成功");
+    useMessage.success("复制建表 SQL 成功");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 };
 
@@ -89,9 +78,9 @@ const deletePage = async (id: any) => {
   try {
     await deleteMyTabPage(id);
     formListStore.fetchGetMyTabPage();
-    open2("删除成功");
+    useMessage.success("删除成功");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 };
 </script>

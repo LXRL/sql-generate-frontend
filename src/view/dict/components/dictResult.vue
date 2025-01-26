@@ -2,9 +2,9 @@
 import { ref, watch, computed } from "vue";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { ElMessage } from "element-plus";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { useMessage } from '@/hook/useMessage';
 
 const props = defineProps({
   language: {
@@ -17,7 +17,7 @@ const props = defineProps({
   },
   tableData: {
     type: Object,
-    default: () => {},
+    default: () => { },
   },
 });
 
@@ -28,6 +28,7 @@ const activeNames = ref(["1", "2"]);
 const codeText = ref("");
 const codeTextSql = ref("");
 const codeDataList = ref([]);
+
 watch(
   () => props.tableData,
   (newFormData) => {
@@ -44,49 +45,38 @@ const editorOptions = {
   theme: "one-dark",
   lineNumbers: true,
 };
-
-// 消息提示
-const open2 = (text:  any) => {
-  ElMessage({
-    message: text,
-    type: "success",
-  });
-};
-const open4 = (error:  any) => {
-  ElMessage.error(error);
-};
 // 复制全部
 const copyAll = async () => {
-    try {
-        const all = codeTextSql.value + codeText.value
-        await navigator.clipboard.writeText(all);
-        open2("已复制到剪切板")
-    } catch (error) {
-        open4(error)
-    }
+  try {
+    const all = codeTextSql.value + codeText.value
+    await navigator.clipboard.writeText(all);
+    useMessage.success("已复制到剪切板")
+  } catch (error) {
+    useMessage.failed(error)
+  }
 }
 
 // 复制到剪贴板的函数
 const copyToClipboard = async (data: any) => {
-    try {
-        await navigator.clipboard.writeText(data);
-        open2("已复制到剪切板")
-    } catch (error) {
-        open4(error)
-    }
+  try {
+    await navigator.clipboard.writeText(data);
+    useMessage.success("已复制到剪切板")
+  } catch (error) {
+    useMessage.failed(error)
+  }
 };
 
 // 下载数据
 const download = () => {
-    // 将JSON数据转换为工作表
-    const workSheet = XLSX.utils.json_to_sheet(codeDataList.value)
-    // 建一个新的工作簿
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, workSheet, 'sheet1')
-    // 生成 Excel 文件并下载
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
-    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' })
-    saveAs(blob, 'data.xlsx')
+  // 将JSON数据转换为工作表
+  const workSheet = XLSX.utils.json_to_sheet(codeDataList.value)
+  // 建一个新的工作簿
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, workSheet, 'sheet1')
+  // 生成 Excel 文件并下载
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' })
+  saveAs(blob, 'data.xlsx')
 
 }
 // 分页
@@ -107,7 +97,7 @@ const handlePageChange = (newPage: any) => {
 <template>
   <template v-if="codeText">
     <button class="button" v-if="name === '插入语句'" @click="copyAll()">复制全部</button>
-        <button class="button" v-else-if="name === '模拟数据'" @click="download()">下载数据</button>
+    <button class="button" v-else-if="name === '模拟数据'" @click="download()">下载数据</button>
     <div class="demo-collapse dictCode">
       <template v-if="name != '模拟数据'">
         <el-collapse v-model="activeNames">
@@ -117,24 +107,14 @@ const handlePageChange = (newPage: any) => {
               <template #title>
                 <div class="collText">
                   建表语句
-                  <button
-                    class="collButton"
-                    @click="copyToClipboard(codeTextSql)"
-                  >
+                  <button class="collButton" @click="copyToClipboard(codeTextSql)">
                     复制
                   </button>
                 </div>
               </template>
               <div class="collInfo">
-                <codemirror
-                  v-model="codeTextSql"
-                  :options="editorOptions"
-                  :autofocus="true"
-                  :indent-with-tab="true"
-                  :tab-size="2"
-                  :extensions="extensions"
-                  style="padding: 16px 16px 24px; height: 300px"
-                />
+                <codemirror v-model="codeTextSql" :options="editorOptions" :autofocus="true" :indent-with-tab="true"
+                  :tab-size="2" :extensions="extensions" style="padding: 16px 16px 24px; height: 300px" />
               </div>
             </el-collapse-item>
           </template>
@@ -149,15 +129,8 @@ const handlePageChange = (newPage: any) => {
               </div>
             </template>
             <div class="collInfo">
-              <codemirror
-                v-model="codeText"
-                :options="editorOptions"
-                :autofocus="true"
-                :indent-with-tab="true"
-                :tab-size="2"
-                :extensions="extensions"
-                style="padding: 16px; height: 400px"
-              />
+              <codemirror v-model="codeText" :options="editorOptions" :autofocus="true" :indent-with-tab="true"
+                :tab-size="2" :extensions="extensions" style="padding: 16px; height: 400px" />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -173,13 +146,8 @@ const handlePageChange = (newPage: any) => {
               </template>
             </el-table>
           </div>
-          <el-pagination
-            layout="prev, pager, next"
-            :total="totalRecords"
-            :page-size="pageSize"
-            :current-page.sync="currentPage"
-            @current-change="handlePageChange"
-          />
+          <el-pagination layout="prev, pager, next" :total="totalRecords" :page-size="pageSize"
+            :current-page.sync="currentPage" @current-change="handlePageChange" />
         </div>
       </template>
     </div>

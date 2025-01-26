@@ -6,10 +6,12 @@ import { storeToRefs } from "pinia";
 import { getTabSql, deleteMyTabPage } from "@/api/modules/table";
 import { useFormStore } from "@/store/modules/formStore";
 import { useRouter } from "vue-router";
+import { useMessage } from "@/hook/useMessage";
 
 const formListStore = useFormList();
 const { MyTablePage } = storeToRefs(formListStore);
 formListStore.fetchGetMyTanPage();
+
 const isNull = computed(() => MyTablePage?.value?.records?.length);
 
 // 分页
@@ -26,19 +28,10 @@ const paginatedData = computed(() => {
 const handlePageChange = (newPage: number) => {
   currentPage.value = newPage;
 };
+
 // search
 const search = ref("");
 
-// 消息提示
-const open2 = (text: any) => {
-  ElMessage({
-    message: text,
-    type: "success",
-  });
-};
-const open4 = (error: any) => {
-  ElMessage.error(error);
-};
 
 // 导入 form
 const router = useRouter();
@@ -49,7 +42,7 @@ const setFormData = (content: any) => {
     ...res,
   });
   router.push("/");
-  open2("导入成功");
+  useMessage.success("导入成功");
 };
 
 // key
@@ -57,6 +50,7 @@ const getContent = (content: any) => {
   const jsonObject = JSON.parse(content);
   return jsonObject;
 };
+
 const getName = (content: any) => {
   try {
     const jsonObject = JSON.parse(content);
@@ -65,7 +59,6 @@ const getName = (content: any) => {
       .join(", ");
     return fieldNames;
   } catch (error) {
-    console.log("JSON parse error:", error);
     return content; // 如果解析失败，返回原始内容
   }
 };
@@ -79,9 +72,9 @@ const getCopy = async (id: any) => {
   try {
     const res = await getTabSql(id);
     await navigator.clipboard.writeText(res.data);
-    open2("复制建表SQL成功");
+    useMessage.success("复制建表SQL成功");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 };
 
@@ -91,15 +84,16 @@ const deletePage = async (id: any) => {
   try {
     await deleteMyTabPage(id);
     formListStore.fetchGetMyTabPage();
-    open2("删除成功");
+    useMessage.success("删除成功");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 };
 
 const genTo = () => {
   router.push("/");
 };
+
 </script>
 <template>
   <div class="Right">
@@ -109,19 +103,11 @@ const genTo = () => {
         <button class="Button" @click="genTo()">创建表</button>
       </template>
       <template v-slot:seInfo v-if="isNull">
-        <el-input
-          v-model="search"
-          placeholder="请输入名称"
-          style="width: 200px"
-        ></el-input>
+        <el-input v-model="search" placeholder="请输入名称" style="width: 200px"></el-input>
         <button class="Button">搜索</button>
       </template>
       <template v-slot:daInfo>
-        <template
-          v-if="isNull"
-          v-for="(item, index) in paginatedData"
-          :key="item.name"
-        >
+        <template v-if="isNull" v-for="(item, index) in paginatedData" :key="item.name">
           <div class="daInfo">
             <div class="name">
               <h4>{{ item.name }}</h4>
@@ -145,33 +131,17 @@ const genTo = () => {
               <p>{{ getTime(item.updateTime) }}</p>
               <button class="bu" @click="getCopy(item.id)">复制语句</button>
               <button>举报</button>
-              <el-popover
-                :visible="deleteShow[index]"
-                placement="top"
-                :width="160"
-              >
+              <el-popover :visible="deleteShow[index]" placement="top" :width="160">
                 <p>你确定要删除？</p>
                 <div style="text-align: right; margin: 10px 0 0 0">
-                  <el-button
-                    size="small"
-                    text
-                    @click="deleteShow[index] = false"
-                    >取消</el-button
-                  >
-                  <el-button
-                    size="small"
-                    type="primary"
-                    @click="(deleteShow[index] = false), deletePage(item.id)"
-                  >
+                  <el-button size="small" text @click="deleteShow[index] = false">取消</el-button>
+                  <el-button size="small" type="primary" @click="(deleteShow[index] = false), deletePage(item.id)">
                     确定
                   </el-button>
                 </div>
                 <template #reference>
-                  <el-button
-                    @click="deleteShow[index] = true"
-                    style="border: none; background-color: #f9f9f9"
-                    >删除</el-button
-                  >
+                  <el-button @click="deleteShow[index] = true"
+                    style="border: none; background-color: #f9f9f9">删除</el-button>
                 </template>
               </el-popover>
             </div>
@@ -184,13 +154,8 @@ const genTo = () => {
           </div>
         </template>
         <div class="pag">
-          <el-pagination
-            layout=" prev, pager, next"
-            :total="totalRecords"
-            :page-size="pageSize"
-            :current-page="currentPage"
-            @current-change="handlePageChange"
-          />
+          <el-pagination layout=" prev, pager, next" :total="totalRecords" :page-size="pageSize"
+            :current-page="currentPage" @current-change="handlePageChange" />
         </div>
       </template>
     </infoRight>
@@ -211,7 +176,7 @@ const genTo = () => {
     margin-bottom: 10px;
     border-bottom: 1px solid var(--underline-border-color);
 
-    & > div {
+    &>div {
       width: 100%;
       display: flex;
       align-items: center;
@@ -248,7 +213,7 @@ const genTo = () => {
     }
 
     .dbName {
-      width: 340px;
+      width: 100%;
       display: flex;
       justify-content: space-between;
     }

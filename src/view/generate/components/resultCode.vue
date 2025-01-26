@@ -5,6 +5,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { useMessage } from '@/hook/useMessage';
 
 const props = defineProps({
     language: {
@@ -42,16 +43,7 @@ const editorOptions = {
     lineNumbers: true,
 };
 
-// 消息提示
-const open2 = (text: any) => {
-    ElMessage({
-        message: text,
-        type: 'success',
-    })
-}
-const open4 = (error: any) => {
-    ElMessage.error(error)
-}
+
 
 
 // 复制全部
@@ -59,9 +51,9 @@ const copyAll = async () => {
     try {
         const all = codeTextSql.value + codeText.value
         await navigator.clipboard.writeText(all);
-        open2("已复制到剪切板")
+        useMessage.success("已复制到剪切板")
     } catch (error) {
-        open4(error)
+        useMessage.failed(error)
     }
 }
 
@@ -69,9 +61,9 @@ const copyAll = async () => {
 const copyToClipboard = async (data: any) => {
     try {
         await navigator.clipboard.writeText(data);
-        open2("已复制到剪切板")
+        useMessage.success("已复制到剪切板")
     } catch (error) {
-        open4(error)
+        useMessage.failed(error)
     }
 };
 

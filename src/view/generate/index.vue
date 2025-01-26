@@ -7,21 +7,10 @@ import { getGenAuto } from "@/api";
 import { getUploadExcelFile } from "@/api";
 import generateResult from "./components/generateResult.vue";
 import genTable from "./components/genTable.vue";
-import { ElMessage } from "element-plus";
+import { useMessage } from "@/hook/useMessage";
 
 // Form
 const formStore = useFormStore();
-
-// 消息提示
-const open2 = (text: any) => {
-  ElMessage({
-    message: text,
-    type: "success",
-  });
-};
-const open4 = (error: any) => {
-  ElMessage.error(error);
-};
 
 // brainPower 智能导入
 const content = ref<string>("");
@@ -31,9 +20,9 @@ const setBrain = () =>
 const onSubmit = async () => {
   try {
     await getGenAuto(content.value);
-    open2("导入成功");
+    useMessage.success("导入成功");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 };
 // tableShow 导入表
@@ -120,8 +109,9 @@ const getDisposition = () => {
     ...parsedDisposition,
   });
   dispositionShow.value = false;
-  open2("导入成功");
+  useMessage.success("导入成功")
 };
+
 // sqlShow 导入建表Sql
 const tabSql = ref();
 const sqlShow = ref<boolean>(false);
@@ -132,7 +122,7 @@ const setTabSql = () => {
 };
 const getTabSql = () => {
   sqlShow.value = false;
-  open2("导入成功");
+  useMessage.success("导入成功");
 };
 
 // excel 导入Excel
@@ -142,15 +132,14 @@ const onFileChange = (event: Event) => {
   if (target.files && target.files[0]) {
     getUploadExcelFile(target.files[0])
       .then((response: any) => {
-        console.log("上传成功:", response.data);
         const data = response.data;
         formStore.updateState({
           ...data,
         });
-        open2("导入成功");
+        useMessage.success("导入成功");
       })
       .catch((error: any) => {
-        open4(error);
+        useMessage.failed(error);
       });
   }
 };
@@ -178,32 +167,21 @@ const uploadFile = () => {
           <div class="formInfo">
             <!-- into -->
             <div class="into">
-              <button
-                class="brainPower Button"
-                style="border: 1px solid #1890ff; color: #1890ff"
-                @click="brainPowerShow = true"
-              >
+              <button class="brainPower Button" style="border: 1px solid #1890ff; color: #1890ff"
+                @click="brainPowerShow = true">
                 智能导入
               </button>
               <button class="table Button" @click="tableShow = true">
                 导入表
               </button>
-              <button
-                class="disposition Button"
-                @click="dispositionShow = true"
-              >
+              <button class="disposition Button" @click="dispositionShow = true">
                 导入配置
               </button>
               <button class="tableSQL Button" @click="sqlShow = true">
                 导入建表SQL
               </button>
               <div>
-                <input
-                  type="file"
-                  @change="onFileChange"
-                  ref="fileInput"
-                  style="display: none"
-                />
+                <input type="file" @change="onFileChange" ref="fileInput" style="display: none" />
                 <button class="Excel Button" @click="uploadFile">
                   导入Excel
                 </button>
@@ -214,28 +192,16 @@ const uploadFile = () => {
           </div>
 
           <!--智能导入 弹出框 -->
-          <el-dialog
-            v-model="brainPowerShow"
-            title="智能导入"
-            width="520"
-            style="padding: 24px"
-          >
+          <el-dialog v-model="brainPowerShow" title="智能导入" width="520" style="padding: 24px">
             <div class="header">
-              请输入表的列名，多个列以【英文或中文逗号】分隔：<button
-                class="Button"
-                @click="setBrain"
-              >
+              请输入表的列名，多个列以【英文或中文逗号】分隔：<button class="Button" @click="setBrain">
                 导入示例
               </button>
             </div>
             <el-form>
               <el-form-item>
-                <el-input
-                  v-model="content"
-                  style="height: 361px"
-                  autocomplete="off"
-                  placeholder="请输入表的列名，多个列以【英文或中文逗号】分隔："
-                />
+                <el-input v-model="content" style="height: 361px" autocomplete="off"
+                  placeholder="请输入表的列名，多个列以【英文或中文逗号】分隔：" />
               </el-form-item>
             </el-form>
             <template #footer>
@@ -252,12 +218,7 @@ const uploadFile = () => {
           </el-drawer>
 
           <!-- 导入配置 -->
-          <el-dialog
-            v-model="dispositionShow"
-            title="导入配置"
-            width="520"
-            style="padding: 24px"
-          >
+          <el-dialog v-model="dispositionShow" title="导入配置" width="520" style="padding: 24px">
             <div class="header">
               请输入表结构JSON：<button class="Button" @click="setDisposition">
                 导入示例
@@ -265,32 +226,20 @@ const uploadFile = () => {
             </div>
             <el-form>
               <el-form-item>
-                <el-input
-                  v-model="disposition"
-                  style="height: 361px"
-                  autocomplete="off"
-                  placeholder="请输入配置JSON，可以从表单输入处复制"
-                  type="textarea"
-                />
+                <el-input v-model="disposition" style="height: 361px" autocomplete="off"
+                  placeholder="请输入配置JSON，可以从表单输入处复制" type="textarea" />
               </el-form-item>
             </el-form>
             <template #footer>
               <div class="dialog-footer">
-                <el-button type="primary" @click="getDisposition()"
-                  >导入</el-button
-                >
+                <el-button type="primary" @click="getDisposition()">导入</el-button>
                 <el-button @click="disposition = ''">重置</el-button>
               </div>
             </template>
           </el-dialog>
 
           <!-- 导入建表SQL -->
-          <el-dialog
-            v-model="sqlShow"
-            title="导入建表 SQL"
-            width="520"
-            style="padding: 24px"
-          >
+          <el-dialog v-model="sqlShow" title="导入建表 SQL" width="520" style="padding: 24px">
             <div class="header">
               请输入建表 SQL 语句：<button class="Button" @click="setTabSql()">
                 导入示例
@@ -298,13 +247,8 @@ const uploadFile = () => {
             </div>
             <el-form>
               <el-form-item>
-                <el-input
-                  v-model="tabSql"
-                  style="height: 361px"
-                  autocomplete="off"
-                  placeholder="请输入配置JSON，可以从表单输入处复制"
-                  type="textarea"
-                />
+                <el-input v-model="tabSql" style="height: 361px" autocomplete="off" placeholder="请输入配置JSON，可以从表单输入处复制"
+                  type="textarea" />
               </el-form-item>
             </el-form>
             <template #footer>

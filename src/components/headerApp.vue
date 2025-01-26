@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import useUserLoginStore from "../view/login/store";
-
+import { useMessage } from "@/hook/useMessage";
 // navigation
 const navList = ref<{ name: string; path: string }[]>([
   {
@@ -39,7 +39,7 @@ const loginTo = () => {
 const userLoginStore = useUserLoginStore();
 const userName = computed(() => {
   if (userLoginStore.isLoggedIn) {
-    return userLoginStore.userData?.userAccount.charAt(0).toUpperCase();
+    return userLoginStore.userData?.userAccount?.charAt(0).toUpperCase();
   }
   return "";
 });
@@ -52,7 +52,8 @@ const account = computed(() => {
 });
 
 const logoutClick = async () => {
-  await userLoginStore.featchUserLogout();
+  await userLoginStore.fetchUserLogout();
+  useMessage.success('已退出登录')
 };
 </script>
 
@@ -64,10 +65,7 @@ const logoutClick = async () => {
     </div>
     <div class="navigation">
       <template v-for="(item, index) in navList" :key="index">
-        <div
-          :class="{ active: navCurrent === index }"
-          @click="(navCurrent = index), navClick(item.path)"
-        >
+        <div :class="{ active: navCurrent === index }" @click="(navCurrent = index), navClick(item.path)">
           {{ item.name }}
         </div>
       </template>
@@ -90,9 +88,7 @@ const logoutClick = async () => {
         </div>
       </template>
       <template v-else>
-        <el-button class="Button" type="primary" plain @click="loginTo"
-          >登录</el-button
-        >
+        <el-button class="Button" type="primary" plain @click="loginTo">登录</el-button>
       </template>
     </div>
   </div>

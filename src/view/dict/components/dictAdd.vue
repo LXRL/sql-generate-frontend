@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import useFormList from '@/store/modules/formList';
 import { AddMyDictPage } from '@/api'
 import { useRouter } from 'vue-router';
+import { useMessage } from '@/hook/useMessage';
 
 const formListStore = useFormList();
 const { MyFormPage } = storeToRefs(formListStore);
@@ -30,24 +31,15 @@ const updateContent = (selectedValue: string) => {
     const result = selectedItem ? selectedItem.content.replace(/[\[\]"]/g, '').replace(/,/g, ', ') : '';
     form.content = result
 };
-// 消息提示
-const open2 = (text:any) => {
-    ElMessage({
-        message: text,
-        type: 'success',
-    })
-}
-const open4 = (error:any) => {
-    ElMessage.error(error)
-}
+
 
 const onSubmit = async () => {
     try {
         const res = await AddMyDictPage(form)
-        open2("创建成功")
+        useMessage.success('创建成功')
         resultTo()
     } catch (error) {
-        console.log(error)
+        useMessage.failed(error)
     }
 }
 

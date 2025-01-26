@@ -7,6 +7,7 @@ import useUserLoginStore from "./store";
 // 登录
 const login: loginType = ref({});
 const userLoginStore = useUserLoginStore();
+
 // 跳转
 const router = useRouter();
 const signTo = () => router.push("/sign");
@@ -17,11 +18,7 @@ const onSubmit = async () => {
   genTo();
 };
 
-// 密码显示隐藏
-const passWordShow = ref<boolean>(false);
-const changeShow = () => {
-  passWordShow.value = !passWordShow.value;
-};
+
 </script>
 
 <template>
@@ -35,44 +32,27 @@ const changeShow = () => {
       <div class="info">
         <el-form :model="login" label-width="auto">
           <div class="userAccount">
-            <img class="icon" src="@/assets/images/login_login.png" alt="" />
-            <input v-model="login.userAccount" placeholder="请输入账号" />
-            <img
-              class="icon cur"
-              src="@/assets/images/login_delete.png"
-              alt=""
-            />
+
+            <el-input v-model="login.userAccount" placeholder="请输入账号" clearable>
+              <template #prefix>
+                <img class="icon" src="@/assets/images/login_login.png" alt="" />
+              </template>
+            </el-input>
+
           </div>
           <div class="userPassword">
-            <img class="icon" src="@/assets/images/login_lock.png" alt="" />
-            <input
-              v-model="login.userPassword"
-              placeholder="请输入密码"
-              :type="passWordShow ? 'text' : 'password'"
-            />
-            <img
-              v-if="passWordShow"
-              class="icon cur"
-              src="@/assets/images/login_see.png"
-              alt=""
-              @click="changeShow()"
-            />
-            <img
-              v-else
-              class="icon cur"
-              src="@/assets/images/login_noSee.png"
-              alt=""
-              @click="changeShow()"
-            />
+            <el-input v-model="login.userPassword" placeholder="请输入密码" type="password" show-password>
+              <template #prefix>
+                <img class="icon" src="@/assets/images/login_lock.png" alt="" />
+              </template>
+            </el-input>
           </div>
           <div class="sign">
             <div @click="signTo">新用户注册</div>
             <div @click="genTo">返回主页</div>
           </div>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit" style="width: 100%"
-              >登录</el-button
-            >
+            <el-button type="primary" @click="onSubmit" style="width: 100%">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -87,7 +67,7 @@ const changeShow = () => {
   background-color: white;
 
   .login {
-    width: 328px;
+    width: 300px;
     margin: 32px auto;
     background-color: white;
 
@@ -115,22 +95,10 @@ const changeShow = () => {
     }
 
     .info {
+
       .userAccount,
       .userPassword {
-        display: flex;
-        padding: 11px;
-        border: 1px solid var(--underline-border-color);
-        align-items: center;
         margin-bottom: 16px;
-
-        input {
-          width: 268px;
-          height: 25px;
-          border: none;
-          outline: none;
-          background-color: #e8f0fe;
-          margin: 0 5px;
-        }
 
         .icon {
           width: 16px;

@@ -1,105 +1,13 @@
-<template>
-  <el-collapse v-model="activeNames">
-    <el-collapse-item :name="index + 1">
-      <template #title>
-        <div class="fieldListTitle">
-          <el-form-item label="字段名:">
-            <el-input
-              v-model="item.fieldName"
-              placeholder="多个单词间建议用下划线分割"
-            />
-          </el-form-item>
-          <div class="buDiv">
-            <span @click="fieldsContent(item)">保存</span>
-            <span @click="fieldListDelete(index)">删除</span>
-          </div>
-        </div>
-      </template>
-      <!-- info -->
-      <div class="fieldListInfo">
-        <el-form-item label="字段类型:">
-          <el-input
-            v-model="item.fieldType"
-            placeholder="varchar(256)"
-            style="width: 120px"
-          />
-        </el-form-item>
-        <el-form-item label="默认值:">
-          <el-input
-            v-model="item.defaultValue"
-            placeholder="要和字段类型匹配"
-          />
-        </el-form-item>
-        <el-form-item label="注释:">
-          <el-input v-model="item.comment" placeholder="用户名" />
-        </el-form-item>
-        <el-form-item label="onUpdate:">
-          <el-input v-model="item.onUpdate" placeholder="字段更新动作" />
-        </el-form-item>
-        <el-form-item>
-          <el-checkbox :value="item.notNull" name="type" v-model="item.notNull">
-            非空
-          </el-checkbox>
-        </el-form-item>
-        <el-form-item>
-          <el-checkbox
-            :value="item.primaryKey"
-            name="type"
-            v-model="item.primaryKey"
-          >
-            主键
-          </el-checkbox>
-        </el-form-item>
-        <el-form-item>
-          <el-checkbox
-            :value="item.autoIncrement"
-            name="type"
-            v-model="item.autoIncrement"
-          >
-            自增
-          </el-checkbox>
-        </el-form-item>
-        <el-form-item label="字段类型:">
-          <el-select v-model="item.mockType" placeholder="" size="large" style="width: 120px">
-            <el-option v-for="item in fieldListOptions" :key="item" :label="item" :value="item"
-              style="padding: 0 10px !important;" />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          v-if="item.mockType != '不模拟'"
-          :label="fieldTypeLabel(item.mockType)"
-        >
-          <template v-if="item.mockType === '随机'">
-            <el-select v-model="item.mockParams" placeholder="" size="large" style="width: 120px;">
-              <el-option v-for="item in random" :key="item" :label="item" :value="item"
-                style="padding: 0 10px !important;" />
-            </el-select>
-          </template>
-          <template v-else-if="item.mockType === '递增'">
-            <el-input v-model="item.mockParams" style="width: 88px" />
-          </template>
-          <template v-else-if="item.mockType === '规则'">
-            <el-input
-              v-model="item.mockParams"
-              style="width: 160px"
-              placeholder="请输入正则表达式"
-            />
-          </template>
-          <template v-else-if="item.mockType === '词库'">
-            <el-input v-model="item.mockParams" style="width: 130px" />
-          </template>
-        </el-form-item>
-      </div>
-    </el-collapse-item>
-  </el-collapse>
-</template>
-
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import { useFormStore } from "../../../store/modules/formStore";
 import { cloneDeep } from "lodash";
+import { storeToRefs } from "pinia";
+import useFormList from "@/store/modules/formList";
+import { useRouter } from "vue-router";
+import { useMessage } from "@/hook/useMessage";
 
-defineProps({
+const props = defineProps({
   item: {
     type: Object,
     default: {},
@@ -109,6 +17,24 @@ defineProps({
     default: 0,
   },
 });
+
+
+watch(
+  () => props.item.mockType,
+  (v) => {
+    switch (v) {
+      case "随机":
+        props.item.mockParams = '字符串'
+        break;
+      case "递增":
+        props.item.mockParams = 1
+        break;
+      default:
+        props.item.mockParams = ''
+        break;
+    }
+  }
+)
 
 const formStore = useFormStore();
 const activeNames = ref(["1"]);
@@ -161,7 +87,107 @@ const fieldsContent = (data: any) => {
   fieldsSaveShow.value = true;
   fieldsForm.content = JSON.stringify(data);
 };
+
+// 词库
+const recordsModel = ref('')
+const formListStore = useFormList();
+const { MyFormPage } = storeToRefs(formListStore);
+formListStore.fetchGetMyDictPage();
+const records = computed(() => MyFormPage?.value?.records)
+const handleSelectChange = (value: string) => {
+  const filteredRecords = records.value.filter((item: any) => item.name === value)
+  props.item.mockParams = filteredRecords[0].id
+};
+
+const router = useRouter()
+const dictAddTo = () => router.push("/dict/add")
+const dictRefresh = () => {
+  formListStore.fetchGetMyDictPage();
+  useMessage.success("已刷新")
+}
 </script>
+
+<template>
+  <el-collapse v-model="activeNames">
+    <el-collapse-item :name="index + 1">
+      <template #title>
+        <div class="fieldListTitle">
+          <el-form-item label="字段名:">
+            <el-input v-model="item.fieldName" placeholder="多个单词间建议用下划线分割" />
+          </el-form-item>
+          <div class="buDiv">
+            <span @click="fieldsContent(item)">保存</span>
+            <span @click="fieldListDelete(index)">删除</span>
+          </div>
+        </div>
+      </template>
+      <!-- info -->
+      <div class="fieldListInfo">
+        <el-form-item label="字段类型:">
+          <el-input v-model="item.fieldType" placeholder="varchar(256)" style="width: 120px" />
+        </el-form-item>
+        <el-form-item label="默认值:">
+          <el-input v-model="item.defaultValue" placeholder="要和字段类型匹配" />
+        </el-form-item>
+        <el-form-item label="注释:">
+          <el-input v-model="item.comment" placeholder="用户名" />
+        </el-form-item>
+        <el-form-item label="onUpdate:">
+          <el-input v-model="item.onUpdate" placeholder="字段更新动作" />
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox :value="item.notNull" name="type" v-model="item.notNull">
+            非空
+          </el-checkbox>
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox :value="item.primaryKey" name="type" v-model="item.primaryKey">
+            主键
+          </el-checkbox>
+        </el-form-item>
+        <el-form-item>
+          <el-checkbox :value="item.autoIncrement" name="type" v-model="item.autoIncrement">
+            自增
+          </el-checkbox>
+        </el-form-item>
+        <el-form-item label="字段类型:">
+          <el-select v-model="item.mockType" placeholder="" size="large" style="width: 120px">
+            <el-option v-for="item in fieldListOptions" :key="item" :label="item" :value="item"
+              style="padding: 0 10px !important;" />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="item.mockType != '不模拟'" :label="fieldTypeLabel(item.mockType)">
+          <template v-if="item.mockType === '随机'">
+            <el-select v-model="item.mockParams" placeholder="" size="large" style="width: 120px;">
+              <el-option v-for="item in random" :key="item" :label="item" :value="item"
+                style="padding: 0 10px !important;" />
+            </el-select>
+          </template>
+          <template v-else-if="item.mockType === '递增'">
+            <el-input v-model="item.mockParams" style="width: 88px" />
+          </template>
+          <template v-else-if="item.mockType === '规则'">
+            <el-input v-model="item.mockParams" style="width: 160px" placeholder="请输入正则表达式" />
+          </template>
+          <template v-else-if="item.mockType === '词库'">
+            <div class="dictSelect">
+              <el-select v-model="recordsModel" @change="handleSelectChange" placeholder="" size="large"
+                style="width: 120px;">
+                <el-option v-for="item in records" :key="item.name" :label="item.name" :value="item.name"
+                  style="padding: 0 10px !important;" />
+                <div class="bo" style="padding: 5px; border-top: 1px solid var(--underline-border-color);">
+                  <el-button @click="dictAddTo()">创建</el-button>
+                  <el-button @click="dictRefresh()">刷新</el-button>
+                </div>
+              </el-select>
+            </div>
+
+          </template>
+        </el-form-item>
+      </div>
+    </el-collapse-item>
+  </el-collapse>
+</template>
 
 <style lang="less" scoped>
 .el-collapse {
@@ -213,8 +239,11 @@ const fieldsContent = (data: any) => {
             width: 182px;
           }
         }
+
+
       }
     }
   }
+
 }
 </style>

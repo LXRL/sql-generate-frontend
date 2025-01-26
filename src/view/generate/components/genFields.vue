@@ -6,6 +6,7 @@ import useFormList from "@/store/modules/formList";
 import { getFieSql } from "@/api/modules/fields";
 import { useFormStore } from "@/store/modules/formStore";
 import { cloneDeep } from "lodash";
+import { useMessage } from "@/hook/useMessage";
 
 const formListStore = useFormList();
 const { MyFieldsPage } = storeToRefs(formListStore);
@@ -58,7 +59,7 @@ const getCopy = async (id: any) => {
     await navigator.clipboard.writeText(res.data);
     alert("复制成功！"); // 可选：显示成功提示
   } catch (error) {
-    console.log("获取失败", error);
+    useMessage.failed(error);
   }
 };
 
@@ -84,11 +85,7 @@ const judgmentK = (value: any) => {
         <button class="Button">去创建</button>
       </template>
       <template v-slot:seInfo>
-        <el-input
-          v-model="search"
-          placeholder="请输入名称"
-          style="width: 200px"
-        ></el-input>
+        <el-input v-model="search" placeholder="请输入名称" style="width: 200px"></el-input>
         <button class="Button">搜索</button>
       </template>
       <template v-slot:daInfo>
@@ -145,13 +142,8 @@ const judgmentK = (value: any) => {
           </div>
         </template>
         <div class="pag">
-          <el-pagination
-            layout=" prev, pager, next"
-            :total="totalRecords"
-            :page-size="pageSize"
-            :current-page="currentPage"
-            @current-change="handlePageChange"
-          />
+          <el-pagination layout=" prev, pager, next" :total="totalRecords" :page-size="pageSize"
+            :current-page="currentPage" @current-change="handlePageChange" />
         </div>
       </template>
     </infoRight>
@@ -172,7 +164,7 @@ const judgmentK = (value: any) => {
     margin-bottom: 10px;
     border-bottom: 1px solid var(--underline-border-color);
 
-    & > div {
+    &>div {
       width: 100%;
       display: flex;
       align-items: center;

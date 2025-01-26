@@ -7,8 +7,8 @@ import { AddMyTabPage, AddMyFiePage } from "@/api";
 import genFields from "./genFields.vue";
 import generateItem from "./generateItem.vue";
 import { cloneDeep } from "lodash";
-import { ElMessage } from "element-plus";
 import draggable from "vuedraggable";
+import { useMessage } from "@/hook/useMessage";
 
 // Form
 const formStore = useFormStore();
@@ -96,16 +96,7 @@ const universalClick = () => {
     fieldList: tempFieldList,
   });
 };
-// 消息提示
-const open2 = (text: string) => {
-  ElMessage({
-    message: text,
-    type: "success",
-  });
-};
-const open4 = (error: any) => {
-  ElMessage.error(error);
-};
+
 
 // submit 提交
 const formDataStore = useFormDataStore();
@@ -113,9 +104,9 @@ const onSubmit = async () => {
   try {
     const response = await getGenSchema(formStore);
     formDataStore.formData = response.data;
-    open2("已生成");
+    useMessage.success("已生成");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 };
 
@@ -137,7 +128,7 @@ const saveContent = () => {
     saveShow.value = true;
     saveForm.content = JSON.stringify(formStore);
   } else {
-    open4("至少添加一个字段");
+    useMessage.failed("至少添加一个字段");
   }
 };
 
@@ -145,9 +136,9 @@ const saveSubmit = async () => {
   try {
     await AddMyTabPage(saveForm);
     saveShow.value = false;
-    open2("添加成功");
+    useMessage.success("添加成功");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 };
 const reset = () => {
@@ -157,7 +148,7 @@ const reset = () => {
 const disposition = async () => {
   const res = JSON.stringify(formStore);
   await navigator.clipboard.writeText(res);
-  open2("已复制到剪切板");
+  useMessage.success("已复制到剪切板");
 };
 //  导入字段
 const fieldsShow = ref<boolean>(false);
@@ -174,7 +165,7 @@ const fieldsSubmit = async () => {
     await AddMyFiePage(fieldsForm);
     fieldsSaveShow.value = false;
   } catch (error) {
-    console.log("创建失败", error);
+    useMessage.failed(error);
   }
 };
 const fieldsReset = () => {
@@ -187,10 +178,7 @@ const fieldsReset = () => {
     <el-form label-width="auto" label-position="left">
       <!-- dbName -->
       <el-form-item label="库名:">
-        <el-input
-          v-model="formStore.dbName"
-          placeholder="多个单词间建议用下划线分割"
-        />
+        <el-input v-model="formStore.dbName" placeholder="多个单词间建议用下划线分割" />
       </el-form-item>
 
       <!-- tableName -->
@@ -200,19 +188,12 @@ const fieldsReset = () => {
 
       <!-- tableComment -->
       <el-form-item label="表注释:">
-        <el-input
-          v-model="formStore.tableComment"
-          placeholder="描述表的中文名称作用等"
-        />
+        <el-input v-model="formStore.tableComment" placeholder="描述表的中文名称作用等" />
       </el-form-item>
 
       <!-- mockNum -->
       <el-form-item label="生成条数:">
-        <el-input
-          v-model="formStore.mockNum"
-          type="number"
-          style="width: 60px"
-        />
+        <el-input v-model="formStore.mockNum" type="number" style="width: 60px" />
       </el-form-item>
 
       <!-- fieldList -->
@@ -235,9 +216,7 @@ const fieldsReset = () => {
 
       <!-- submit -->
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" style="width: 200px"
-          >一键生成</el-button
-        >
+        <el-button type="primary" @click="onSubmit" style="width: 200px">一键生成</el-button>
         <el-button @click="saveContent()">保存表</el-button>
         <el-button @click="disposition()">复制配置</el-button>
         <el-button @click="resetClick()">重置</el-button>
@@ -245,12 +224,7 @@ const fieldsReset = () => {
     </el-form>
 
     <!-- 保存表 -->
-    <el-dialog
-      v-model="saveShow"
-      title="保存表信息(后续可直接导入)"
-      width="520"
-      style="padding: 24px"
-    >
+    <el-dialog v-model="saveShow" title="保存表信息(后续可直接导入)" width="520" style="padding: 24px">
       <div class="header" style="margin-bottom: 16px">
         注意,你提交的内容可能会被公开
       </div>
@@ -261,13 +235,8 @@ const fieldsReset = () => {
         </el-form-item>
         <el-form-item>
           <p>内容 (不建议在此处修改)</p>
-          <el-input
-            class="add"
-            v-model="saveForm.content"
-            autocomplete="off"
-            placeholder="请输入配置JSON，可以从表单输入处复制"
-            type="textarea"
-          />
+          <el-input class="add" v-model="saveForm.content" autocomplete="off" placeholder="请输入配置JSON，可以从表单输入处复制"
+            type="textarea" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -284,12 +253,7 @@ const fieldsReset = () => {
     </el-drawer>
 
     <!-- 保存字段 -->
-    <el-dialog
-      v-model="fieldsSaveShow"
-      title="保存字段信息(后续可直接导入)"
-      width="520"
-      style="padding: 24px"
-    >
+    <el-dialog v-model="fieldsSaveShow" title="保存字段信息(后续可直接导入)" width="520" style="padding: 24px">
       <div class="header" style="margin-bottom: 16px">
         注意,你提交的内容可能会被公开
       </div>
@@ -300,13 +264,8 @@ const fieldsReset = () => {
         </el-form-item>
         <el-form-item>
           <p>内容 (不建议在此处修改)</p>
-          <el-input
-            class="add"
-            v-model="fieldsForm.content"
-            autocomplete="off"
-            placeholder="请输入配置JSON，可以从表单输入处复制"
-            type="textarea"
-          />
+          <el-input class="add" v-model="fieldsForm.content" autocomplete="off" placeholder="请输入配置JSON，可以从表单输入处复制"
+            type="textarea" />
         </el-form-item>
       </el-form>
       <template #footer>

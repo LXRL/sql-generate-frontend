@@ -8,7 +8,7 @@ import { getTabSql } from "@/api/modules/table";
 import { useFormStore } from "@/store/modules/formStore";
 import { useRouter } from "vue-router";
 import tableRight from "./tableRight.vue";
-import { ElMessage } from "element-plus";
+import { useMessage } from "@/hook/useMessage";
 
 const formListStore = useFormList();
 const { tablePage } = storeToRefs(formListStore);
@@ -31,16 +31,7 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref("");
 
-// 消息提示
-const open2 = (text: any) => {
-    ElMessage({
-        message: text,
-        type: 'success',
-    })
-}
-const open4 = (error: any) => {
-    ElMessage.error(error)
-}
+
 
 // 导入 form
 const router = useRouter();
@@ -51,7 +42,7 @@ const setFormData = (content: any) => {
     ...res,
   });
   router.push("/");
-  open2("导入成功");
+  useMessage.success("导入成功");
 };
 
 // key
@@ -59,6 +50,7 @@ const getContent = (content: any) => {
   const jsonObject = JSON.parse(content);
   return jsonObject;
 };
+
 const getName = (content: any) => {
   try {
     const jsonObject = JSON.parse(content);
@@ -67,8 +59,7 @@ const getName = (content: any) => {
       .join(", ");
     return fieldNames;
   } catch (error) {
-    console.log("JSON parse error:", error);
-    return content; // 如果解析失败，返回原始内容
+    return content;
   }
 };
 // 日期
@@ -81,13 +72,15 @@ const getCopy = async (id: number) => {
   try {
     const res = await getTabSql(id);
     await navigator.clipboard.writeText(res.data);
-    open2("复制建表SQL成功");
+    useMessage.success("复制建表SQL成功");
   } catch (error) {
-    open4(error);
+    useMessage.failed(error);
   }
 }
+
 const generateTo = () => {
-    router.push('/')};
+  router.push('/')
+};
 </script>
 <template>
   <div class="table">
@@ -99,11 +92,7 @@ const generateTo = () => {
             <button class="Button" @click="generateTo()">创建表</button>
           </template>
           <template v-slot:seInfo>
-            <el-input
-              v-model="search"
-              placeholder="请输入名称"
-              style="width: 200px"
-            ></el-input>
+            <el-input v-model="search" placeholder="请输入名称" style="width: 200px"></el-input>
             <button class="Button">搜索</button>
           </template>
           <template v-slot:daInfo>
@@ -136,13 +125,8 @@ const generateTo = () => {
               </div>
             </template>
             <div class="pag">
-              <el-pagination
-                layout=" prev, pager, next"
-                :total="totalRecords"
-                :page-size="pageSize"
-                :current-page="currentPage"
-                @current-change="handlePageChange"
-              />
+              <el-pagination layout=" prev, pager, next" :total="totalRecords" :page-size="pageSize"
+                :current-page="currentPage" @current-change="handlePageChange" />
             </div>
           </template>
         </infoLeft>
@@ -169,7 +153,7 @@ const generateTo = () => {
     margin-bottom: 10px;
     border-bottom: 1px solid var(--underline-border-color);
 
-    & > div {
+    &>div {
       width: 100%;
       display: flex;
       align-items: center;
@@ -206,7 +190,7 @@ const generateTo = () => {
     }
 
     .dbName {
-      width: 340px;
+      width: 100%;
       display: flex;
       justify-content: space-between;
     }

@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { getDictSql } from "@/api";
 import dictRight from "./components/dictRight.vue";
 import { useRouter } from 'vue-router';
+import { useMessage } from "@/hook/useMessage";
 
 const formListStore = useFormList()
 const { formPage } = storeToRefs(formListStore)
@@ -51,19 +52,19 @@ const getTime = (time: any) => {
 const tableData = ref({});
 const tableShow = ref<boolean>(false);
 const activeName = ref("first");
-const getSql = async (id:  any) => {
+const getSql = async (id: any) => {
   try {
     const res = await getDictSql(id);
     tableData.value = res.data;
   } catch (error) {
-    console.log("获取数据失败", error);
+    useMessage.failed(error);
   }
 };
 
 // 跳转
 const router = useRouter()
 const addTo = () => {
-    router.push('/dict/add')
+  router.push('/dict/add')
 }
 
 </script>
@@ -77,11 +78,7 @@ const addTo = () => {
             <button class="Button" @click="addTo()">创建词库</button>
           </template>
           <template v-slot:seInfo>
-            <el-input
-              v-model="search"
-              placeholder="请输入名称"
-              style="width: 200px"
-            ></el-input>
+            <el-input v-model="search" placeholder="请输入名称" style="width: 200px"></el-input>
             <button class="Button">搜索</button>
           </template>
           <template v-slot:daInfo>
@@ -105,61 +102,32 @@ const addTo = () => {
               </div>
             </template>
             <div class="pag">
-              <el-pagination
-                layout=" prev, pager, next"
-                :total="totalRecords"
-                :page-size="pageSize"
-                :current-page="currentPage"
-                @current-change="handlePageChange"
-              />
+              <el-pagination layout=" prev, pager, next" :total="totalRecords" :page-size="pageSize"
+                :current-page="currentPage" @current-change="handlePageChange" />
             </div>
           </template>
 
           <template v-slot:drInfo>
-            <el-drawer
-              v-model="tableShow"
-              title="生成字典表成功"
-              style="width: 1200px"
-            >
+            <el-drawer v-model="tableShow" title="生成字典表成功" style="width: 1200px">
               <div class="result">
                 <div class="text">
                   <p>生成结果</p>
                 </div>
                 <el-tabs v-model="activeName" class="demo-tabs">
                   <el-tab-pane label="SQL代码" name="first">
-                    <result-code
-                      language="insertSql"
-                      name="插入语句"
-                      :tableData="tableData"
-                    />
+                    <result-code language="insertSql" name="插入语句" :tableData="tableData" />
                   </el-tab-pane>
                   <el-tab-pane label="模拟数据" name="second">
-                    <result-code
-                      language="dataJson"
-                      name="模拟数据"
-                      :tableData="tableData"
-                    />
+                    <result-code language="dataJson" name="模拟数据" :tableData="tableData" />
                   </el-tab-pane>
                   <el-tab-pane label="JSON 数据" name="third">
-                    <result-code
-                      language="dataJson"
-                      name="JSON数据"
-                      :tableData="tableData"
-                    />
+                    <result-code language="dataJson" name="JSON数据" :tableData="tableData" />
                   </el-tab-pane>
                   <el-tab-pane label="Go代码" name="fourth">
-                    <result-code
-                      language="goStructCode"
-                      name="Go结构体"
-                      :tableData="tableData"
-                    />
+                    <result-code language="goStructCode" name="Go结构体" :tableData="tableData" />
                   </el-tab-pane>
                   <el-tab-pane label="java代码" name="five">
-                    <result-code
-                      language="javaEntityCode"
-                      name="实体代码"
-                      :tableData="tableData"
-                    />
+                    <result-code language="javaEntityCode" name="实体代码" :tableData="tableData" />
                   </el-tab-pane>
                 </el-tabs>
               </div>
@@ -189,7 +157,7 @@ const addTo = () => {
     margin-bottom: 10px;
     border-bottom: 1px solid var(--underline-border-color);
 
-    & > div {
+    &>div {
       width: 100%;
       display: flex;
       align-items: center;

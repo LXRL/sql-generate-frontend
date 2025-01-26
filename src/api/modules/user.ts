@@ -20,7 +20,7 @@ export function postUserRegister(params: any) {
     })
 }
 
-export function postUserlogout() {
+export function postUserLogout() {
     return hyRequest.post({
         url: 'user/logout',
     })

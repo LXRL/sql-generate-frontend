@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import { getUserInfo, postUserLogin, postUserlogout, postUserRegister } from '../../../api';
-import { ElMessage } from 'element-plus';
+import { getUserInfo, postUserLogin, postUserLogout, postUserRegister } from '../../../api';
 import { set } from 'lodash';
+import { useMessage } from '@/hook/useMessage';
 
 const useUserLoginStore = defineStore('login', {
     state: () => ({
@@ -13,37 +13,25 @@ const useUserLoginStore = defineStore('login', {
         async fetchUserLogin(params: any) {
             const loginResp: any = await postUserLogin(params)
             if (loginResp.code !== 0) {
-                this.failedMessage();
+                useMessage.failed();
                 return;
             }
             const res: any = await getUserInfo();
             this.isLoggedIn = true
             this.userData = res.data as any
-            this.sucessMessage('登录成功');
+            useMessage.success('登录成功')
         },
-        async featchUserLogout() {
-            await postUserlogout();
+        async fetchUserLogout() {
+            await postUserLogout();
             this.isLoggedIn = false;
         },
         async fetchUserRegister(params: any) {
             const logoutResp: any = await postUserRegister(params)
             if (logoutResp.code !== 0) {
-                this.failedMessage();
+                useMessage.failed();
                 return;
             }
-            this.sucessMessage('注册成功');
-        },
-        sucessMessage(msg: string = 'ok') {
-            ElMessage({
-                message: msg,
-                type: "success",
-            });
-        },
-        failedMessage(msg: string = '请求失败') {
-            ElMessage({
-                message: msg,
-                type: "error",
-            });
+            useMessage.success('登录成功')
         },
         updateState(payload: any = {}) {
             Object.keys(payload).forEach((key) => {
