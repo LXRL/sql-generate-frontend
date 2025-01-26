@@ -217,7 +217,7 @@ const fieldsReset = () => {
 
       <!-- fieldList -->
       <el-form-item>
-        <draggable :list="formStore.fieldList" animation="300">
+        <draggable :list="formStore.fieldList" animation="300" class="dra">
           <template #item="{ element, index }">
             <generateItem :item="element" :index="index" />
           </template>
@@ -337,6 +337,10 @@ const fieldsReset = () => {
         }
       }
     }
+  }
+
+  .dra {
+    width: 100%;
   }
 }
 </style>

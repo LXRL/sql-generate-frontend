@@ -60,18 +60,9 @@
           </el-checkbox>
         </el-form-item>
         <el-form-item label="字段类型:">
-          <el-select
-            v-model="item.mockType"
-            placeholder=""
-            size="large"
-            style="width: 120px"
-          >
-            <el-option
-              v-for="item in fieldListOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+          <el-select v-model="item.mockType" placeholder="" size="large" style="width: 120px">
+            <el-option v-for="item in fieldListOptions" :key="item" :label="item" :value="item"
+              style="padding: 0 10px !important;" />
           </el-select>
         </el-form-item>
         <el-form-item
@@ -79,18 +70,9 @@
           :label="fieldTypeLabel(item.mockType)"
         >
           <template v-if="item.mockType === '随机'">
-            <el-select
-              v-model="item.mockParams"
-              placeholder=""
-              size="large"
-              style="width: 120px"
-            >
-              <el-option
-                v-for="item in random"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
+            <el-select v-model="item.mockParams" placeholder="" size="large" style="width: 120px;">
+              <el-option v-for="item in random" :key="item" :label="item" :value="item"
+                style="padding: 0 10px !important;" />
             </el-select>
           </template>
           <template v-else-if="item.mockType === '递增'">
