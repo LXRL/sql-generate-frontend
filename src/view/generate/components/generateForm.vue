@@ -3,7 +3,7 @@ import { ref, reactive } from "vue";
 import { getGenSchema } from "@/api/index";
 import { useFormStore } from "@/store/modules/formStore";
 import { useFormDataStore } from "@/store/modules/formData";
-import { AddMyTabPage, AddMyFiePage } from "@/api";
+import { AddMyTabPage } from "@/api";
 import genFields from "./genFields.vue";
 import generateItem from "./generateItem.vue";
 import { cloneDeep } from "lodash";
@@ -90,7 +90,7 @@ const newClick = () => {
 // universalClick 新增通用字段
 const universalClick = () => {
   const tempFieldList: any = cloneDeep(formStore.fieldList);
-  tempFieldList.push(commonItems);
+  tempFieldList.push(...commonItems);  // 修复此处，展开数组
   formStore.updateState({
     ...formStore.$state,
     fieldList: tempFieldList,
@@ -141,6 +141,7 @@ const saveSubmit = async () => {
     useMessage.failed(error);
   }
 };
+
 const reset = () => {
   saveForm.name = "";
 };
@@ -153,24 +154,6 @@ const disposition = async () => {
 //  导入字段
 const fieldsShow = ref<boolean>(false);
 
-// 保存字段
-const fieldsSaveShow = ref<boolean>(false);
-const fieldsForm = reactive({
-  name: "",
-  content: "",
-});
-
-const fieldsSubmit = async () => {
-  try {
-    await AddMyFiePage(fieldsForm);
-    fieldsSaveShow.value = false;
-  } catch (error: any) {
-    useMessage.failed(error);
-  }
-};
-const fieldsReset = () => {
-  fieldsForm.name = "";
-};
 </script>
 
 <template>
@@ -252,29 +235,6 @@ const fieldsReset = () => {
       <genFields></genFields>
     </el-drawer>
 
-    <!-- 保存字段 -->
-    <el-dialog v-model="fieldsSaveShow" title="保存字段信息(后续可直接导入)" width="520" style="padding: 24px">
-      <div class="header" style="margin-bottom: 16px">
-        注意,你提交的内容可能会被公开
-      </div>
-      <el-form :model="fieldsForm">
-        <el-form-item>
-          <p>名称</p>
-          <el-input v-model="fieldsForm.name" placeholder="请输入中文名称" />
-        </el-form-item>
-        <el-form-item>
-          <p>内容 (不建议在此处修改)</p>
-          <el-input class="add" v-model="fieldsForm.content" autocomplete="off" placeholder="请输入配置JSON，可以从表单输入处复制"
-            type="textarea" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="fieldsSubmit()">提交</el-button>
-          <el-button @click="fieldsReset()">重置</el-button>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 </template>
 

@@ -24,3 +24,10 @@ export function getUploadExcelFile(file: File) {
         }
     })
 }
+
+export function getGenSchemaBySQL(params: any) {
+    return hyRequest.post({
+        url: 'sql/get/schema/sql',
+        data: { sql: params }
+    })
+}

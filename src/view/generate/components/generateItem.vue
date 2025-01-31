@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import useFormList from "@/store/modules/formList";
 import { useRouter } from "vue-router";
 import { useMessage } from "@/hook/useMessage";
+import { AddMyFiePage } from "@/api";
 
 const props = defineProps({
   item: {
@@ -38,11 +39,6 @@ watch(
 
 const formStore = useFormStore();
 const activeNames = ref(["1"]);
-const fieldsSaveShow = ref<boolean>(false);
-const fieldsForm = reactive({
-  name: "",
-  content: "",
-});
 const fieldListOptions = ref(["随机", "递增", "规则", "词库", "不模拟"]);
 const fieldTypeLabel = (mockType: string) => {
   switch (mockType) {
@@ -83,10 +79,32 @@ const fieldListDelete = (index: number) => {
   });
 };
 
+// 保存
+const fieldsSaveShow = ref<boolean>(false);
+
+const fieldsForm = reactive({
+  name: "",
+  content: "",
+});
+
 const fieldsContent = (data: any) => {
   fieldsSaveShow.value = true;
   fieldsForm.content = JSON.stringify(data);
 };
+
+const fieldsSubmit = async () => {
+  try {
+    await AddMyFiePage(fieldsForm);
+    fieldsSaveShow.value = false;
+  } catch (error: any) {
+    useMessage.failed(error.message);
+  }
+};
+
+const fieldsReset = () => {
+  fieldsForm.name = "";
+};
+
 
 // 词库
 const recordsModel = ref('')
@@ -184,12 +202,35 @@ const dictRefresh = () => {
                 </div>
               </el-select>
             </div>
-
           </template>
         </el-form-item>
       </div>
     </el-collapse-item>
   </el-collapse>
+
+   <!-- 保存字段 -->
+   <el-dialog v-model="fieldsSaveShow" title="保存字段信息(后续可直接导入)" width="520" style="padding: 24px">
+      <div class="header" style="margin-bottom: 16px">
+        注意,你提交的内容可能会被公开
+      </div>
+      <el-form :model="fieldsForm">
+        <el-form-item>
+          <p>名称</p>
+          <el-input v-model="fieldsForm.name" placeholder="请输入中文名称" />
+        </el-form-item>
+        <el-form-item>
+          <p>内容 (不建议在此处修改)</p>
+          <el-input class="add" v-model="fieldsForm.content" autocomplete="off" placeholder="请输入配置JSON，可以从表单输入处复制"
+            type="textarea" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="fieldsSubmit()">提交</el-button>
+          <el-button @click="fieldsReset()">重置</el-button>
+        </div>
+      </template>
+    </el-dialog>
 </template>
 
 <style lang="less" scoped>
