@@ -12,14 +12,16 @@ const formListStore = useFormList();
 const { MyFieldsPage } = storeToRefs(formListStore);
 formListStore.fetchGetMyFiePage();
 
+const pageValue: any = computed(()=>MyFieldsPage?.value)
+
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => MyFieldsPage?.value?.records?.length);
+const totalRecords = computed(() => pageValue?.value.records?.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return MyFieldsPage?.value?.records?.slice(start, end);
+  return pageValue?.value.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -32,9 +34,9 @@ const search = ref("");
 // 导入
 const formStore = useFormStore();
 const setFormData = (content: any) => {
-  const res = getContent(content);
+  const res: any= getContent(content);
   const tempFieldList = cloneDeep(formStore.fieldList);
-  tempFieldList.psuh(res);
+  tempFieldList.push(res);
   formStore.updateState({
     ...formStore.$state,
     fieldList: tempFieldList,
@@ -55,10 +57,10 @@ const getTime = (time: any) => {
 // 复制语句
 const getCopy = async (id: any) => {
   try {
-    const res = await getFieSql(id);
+    const res: any= await getFieSql(id);
     await navigator.clipboard.writeText(res.data);
     alert("复制成功！"); // 可选：显示成功提示
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };

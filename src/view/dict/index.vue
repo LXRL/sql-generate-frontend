@@ -13,14 +13,15 @@ const formListStore = useFormList()
 const { formPage } = storeToRefs(formListStore)
 formListStore.fetchGetDictPage()
 
+const pageValue: any = computed(()=>formPage?.value)
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => formPage?.value?.records?.length);
+const totalRecords = computed(() => pageValue?.value.records?.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return formPage?.value?.records?.slice(start, end);
+  return pageValue?.value.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -38,7 +39,7 @@ const getContent = (content: string) => {
     return Array.isArray(parsedContent)
       ? parsedContent.join(", ")
       : parsedContent;
-  } catch (error) {
+  } catch (error: any) {
     console.error("JSON parse error:", error);
     return content; // 如果解析失败，返回原始内容
   }
@@ -54,9 +55,9 @@ const tableShow = ref<boolean>(false);
 const activeName = ref("first");
 const getSql = async (id: any) => {
   try {
-    const res = await getDictSql(id);
+    const res: any= await getDictSql(id);
     tableData.value = res.data;
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };

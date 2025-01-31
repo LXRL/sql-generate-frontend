@@ -22,29 +22,29 @@ const useFormList = defineStore("formList", {
     actions: {
         // 公开
         async fetchGetDictPage() {
-            const res = await getDictPage()
+            const res: any = await getDictPage()
             this.formPage = res.data
         },
         async fetchGetTabPage() {
-            const res = await getTabPage()
+            const res: any = await getTabPage()
             this.tablePage = res.data
         },
         async fetchGetFiePage() {
-            const res = await getFiePage()
+            const res: any = await getFiePage()
             this.fieldsPage = res.data
         },
 
         // 个人
         async fetchGetMyDictPage() {
-            const res = await getMyDictPage()
+            const res: any = await getMyDictPage()
             this.MyFormPage = res.data
         },
-        async fetchGetMyTanPage() {
-            const res = await getMyTabPage()
+        async fetchGetMyTabPage() {
+            const res: any = await getMyTabPage()
             this.MyTablePage = res.data
         },
         async fetchGetMyFiePage() {
-            const res = await getMyFiePage()
+            const res: any = await getMyFiePage()
             this.MyFieldsPage = res.data
         },
     }

@@ -51,7 +51,7 @@ const copyAll = async () => {
     const all = codeTextSql.value + codeText.value
     await navigator.clipboard.writeText(all);
     useMessage.success("已复制到剪切板")
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error)
   }
 }
@@ -61,7 +61,7 @@ const copyToClipboard = async (data: any) => {
   try {
     await navigator.clipboard.writeText(data);
     useMessage.success("已复制到剪切板")
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error)
   }
 };

@@ -14,14 +14,16 @@ const formListStore = useFormList();
 const { tablePage } = storeToRefs(formListStore);
 formListStore.fetchGetTabPage();
 
+const pageValue: any = computed(()=>tablePage?.value)
+
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => tablePage?.value?.records?.length);
+const totalRecords = computed(() => pageValue?.value.records?.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return tablePage?.value?.records?.slice(start, end);
+  return pageValue?.value.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -37,7 +39,7 @@ const search = ref("");
 const router = useRouter();
 const formStore = useFormStore();
 const setFormData = (content: any) => {
-  const res = getContent(content);
+  const res: any= getContent(content);
   formStore.updateState({
     ...res,
   });
@@ -58,7 +60,7 @@ const getName = (content: any) => {
       .map((item: any) => item.fieldName)
       .join(", ");
     return fieldNames;
-  } catch (error) {
+  } catch (error: any) {
     return content;
   }
 };
@@ -70,10 +72,10 @@ const getTime = (time: any) => {
 // 复制语句
 const getCopy = async (id: number) => {
   try {
-    const res = await getTabSql(id);
+    const res: any= await getTabSql(id);
     await navigator.clipboard.writeText(res.data);
     useMessage.success("复制建表SQL成功");
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 }

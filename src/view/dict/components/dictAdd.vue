@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch,computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import useFormList from '@/store/modules/formList';
 import { AddMyDictPage } from '@/api'
@@ -9,6 +9,8 @@ import { useMessage } from '@/hook/useMessage';
 const formListStore = useFormList();
 const { MyFormPage } = storeToRefs(formListStore);
 formListStore.fetchGetMyDictPage();
+
+const pageValue: any = computed(()=>MyFormPage?.value)
 
 type formType = {
     name: string;
@@ -22,7 +24,7 @@ const form = reactive<formType>({
 const Data = ref<string | null>(null);
 const option = ref<any[]>([]);
 
-watch(MyFormPage, (newValue) => {
+watch(pageValue, (newValue) => {
     option.value = newValue?.records || [];
 });
 
@@ -35,10 +37,10 @@ const updateContent = (selectedValue: string) => {
 
 const onSubmit = async () => {
     try {
-        const res = await AddMyDictPage(form)
+        await AddMyDictPage(form)
         useMessage.success('创建成功')
         resultTo()
-    } catch (error) {
+    } catch (error: any) {
         useMessage.failed(error)
     }
 }

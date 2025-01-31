@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 // 获取父组件值
-const props = defineProps({
+defineProps({
     title: {
         type: String,
         default: ''

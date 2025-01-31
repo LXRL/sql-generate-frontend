@@ -12,16 +12,17 @@ import { useMessage } from '@/hook/useMessage';
 const formListStore = useFormList()
 const { fieldsPage } = storeToRefs(formListStore)
 formListStore.fetchGetFiePage()
-console.log(fieldsPage?.value.records)
+
+const pageValue: any = computed(()=>fieldsPage?.value)
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => fieldsPage?.value?.records?.length);
+const totalRecords = computed(() => pageValue?.value.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return fieldsPage?.value?.records?.slice(start, end);
+    return pageValue?.value.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -48,11 +49,11 @@ const getTime = (time: any) => {
 // 复制语句
 const getCopy = async (id: any) => {
     try {
-        const res = await getFieSql(id)
+        const res: any= await getFieSql(id)
         await navigator.clipboard.writeText(res.data);
         useMessage.success("复制创建字段SQL成功")
 
-    } catch (error) {
+    } catch (error: any) {
         useMessage.failed(error)
     }
 }

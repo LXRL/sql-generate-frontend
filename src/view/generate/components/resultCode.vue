@@ -28,7 +28,7 @@ const codeTextSql = ref('')
 const codeDataList = ref([])
 watch(
     () => formDataStore.formData,
-    (newFormData) => {
+    (newFormData: any) => {
         codeText.value = newFormData?.[props.language] || '';
         codeTextSql.value = newFormData?.createSql || '';
         codeDataList.value = newFormData?.dataList || [];
@@ -52,7 +52,7 @@ const copyAll = async () => {
         const all = codeTextSql.value + codeText.value
         await navigator.clipboard.writeText(all);
         useMessage.success("已复制到剪切板")
-    } catch (error) {
+    } catch (error: any) {
         useMessage.failed(error)
     }
 }
@@ -62,7 +62,7 @@ const copyToClipboard = async (data: any) => {
     try {
         await navigator.clipboard.writeText(data);
         useMessage.success("已复制到剪切板")
-    } catch (error) {
+    } catch (error: any) {
         useMessage.failed(error)
     }
 };

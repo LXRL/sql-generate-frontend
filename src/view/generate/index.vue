@@ -21,7 +21,7 @@ const onSubmit = async () => {
   try {
     await getGenAuto(content.value);
     useMessage.success("导入成功");
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };

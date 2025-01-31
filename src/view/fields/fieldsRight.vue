@@ -10,16 +10,18 @@ import { useMessage } from '@/hook/useMessage';
 const formListStore = useFormList();
 const { MyFieldsPage } = storeToRefs(formListStore);
 formListStore.fetchGetMyFiePage();
-const isNull = computed(() => MyFieldsPage?.value?.records?.length);
+
+const pageValue: any = computed(()=>MyFieldsPage?.value)
+const isNull = computed(() => pageValue?.value.records?.length);
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => MyFieldsPage?.value?.records?.length);
+const totalRecords = computed(() => pageValue?.value.records?.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return MyFieldsPage?.value?.records?.slice(start, end);
+  return pageValue?.value.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -45,10 +47,10 @@ const getTime = (time: any) => {
 // 复制语句
 const getCopy = async (id: number) => {
   try {
-    const res = await getFieSql(id);
+    const res: any= await getFieSql(id);
     await navigator.clipboard.writeText(res.data);
     useMessage.success("复制创建字段SQL成功")
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };
@@ -69,14 +71,14 @@ const judgmentK = (value: boolean) => {
 
 // 删除
 const deleteShow = ref(
-  Array(MyFieldsPage?.value?.records?.length).fill(false)
+  Array(pageValue?.value.records?.length).fill(false)
 );
 const deletePage = async (id: number) => {
   try {
     await deleteMyFiePage(id);
     formListStore.fetchGetMyFiePage();
     useMessage.success("删除成功");
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };
@@ -98,7 +100,8 @@ const genTo = () => {
         <button class="Button">搜索</button>
       </template>
       <template v-slot:daInfo>
-        <template v-if="isNull" v-for="(item, index) in paginatedData" :key="item.name">
+        <div v-if="isNull">
+          <template v-for="(item, index) in paginatedData" :key="item.name">
           <div class="daInfo">
             <div class="name">
               <h4>{{ item.name }}</h4>
@@ -162,6 +165,7 @@ const genTo = () => {
             </div>
           </div>
         </template>
+        </div>
         <template v-else>
           <div class="null">
             <img src="@/assets/images/null.png" alt="" />

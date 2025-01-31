@@ -37,16 +37,17 @@ const loginTo = () => {
 // 登录状态
 // 检查用户是否登录
 const userLoginStore = useUserLoginStore();
+const userData: any = computed(()=> userLoginStore?.userData)
 const userName = computed(() => {
   if (userLoginStore.isLoggedIn) {
-    return userLoginStore.userData?.userAccount?.charAt(0).toUpperCase();
+    return userData?.value.userAccount?.charAt(0).toUpperCase();
   }
   return "";
 });
 
 const account = computed(() => {
   if (userLoginStore.isLoggedIn) {
-    return userLoginStore.userData?.userAccount;
+    return userData?.value.userAccount;
   }
   return "";
 });

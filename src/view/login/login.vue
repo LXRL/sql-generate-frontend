@@ -5,7 +5,11 @@ import { useRouter } from "vue-router";
 import useUserLoginStore from "./store";
 
 // 登录
-const login: loginType = ref({});
+const login = ref<loginType>({
+  userAccount: '',
+  userPassword: ''
+});
+
 const userLoginStore = useUserLoginStore();
 
 // 跳转

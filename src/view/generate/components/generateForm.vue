@@ -89,7 +89,7 @@ const newClick = () => {
 
 // universalClick 新增通用字段
 const universalClick = () => {
-  const tempFieldList = cloneDeep(formStore.fieldList);
+  const tempFieldList: any = cloneDeep(formStore.fieldList);
   tempFieldList.push(commonItems);
   formStore.updateState({
     ...formStore.$state,
@@ -102,10 +102,10 @@ const universalClick = () => {
 const formDataStore = useFormDataStore();
 const onSubmit = async () => {
   try {
-    const response = await getGenSchema(formStore);
+    const response: any = await getGenSchema(formStore);
     formDataStore.formData = response.data;
     useMessage.success("已生成");
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };
@@ -137,7 +137,7 @@ const saveSubmit = async () => {
     await AddMyTabPage(saveForm);
     saveShow.value = false;
     useMessage.success("添加成功");
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };
@@ -146,7 +146,7 @@ const reset = () => {
 };
 // 复制配置
 const disposition = async () => {
-  const res = JSON.stringify(formStore);
+  const res: any= JSON.stringify(formStore);
   await navigator.clipboard.writeText(res);
   useMessage.success("已复制到剪切板");
 };
@@ -164,7 +164,7 @@ const fieldsSubmit = async () => {
   try {
     await AddMyFiePage(fieldsForm);
     fieldsSaveShow.value = false;
-  } catch (error) {
+  } catch (error: any) {
     useMessage.failed(error);
   }
 };
