@@ -18,15 +18,15 @@ const { MyFormPage } = storeToRefs(formListStore)
 formListStore.fetchGetMyDictPage()
 
 const pageValue: any = computed(()=>MyFormPage?.value)
-const isNull = computed(() => pageValue?.value.records?.length)
+const isNull = computed(() => pageValue?.value?.records?.length)
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => pageValue?.value.records?.length);
+const totalRecords = computed(() => pageValue?.value?.records?.length);
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    return pageValue?.value.records?.slice(start, end);
+    return pageValue?.value?.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -66,7 +66,7 @@ const getSql = async (id: any) => {
 }
 
 // 删除
-const deleteShow = ref(Array(pageValue?.value.records?.length).fill(false))
+const deleteShow = ref(Array(pageValue?.value?.records?.length).fill(false))
 const deletePage = async (id: any) => {
     try {
         await deleteMyDictPage(id)

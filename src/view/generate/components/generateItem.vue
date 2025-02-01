@@ -115,7 +115,7 @@ formListStore.fetchGetMyDictPage();
 
 const pageValue: any = computed(()=>MyFormPage?.value)
 
-const records = computed(() => pageValue?.value.records)
+const records = computed(() => pageValue?.value?.records)
 const handleSelectChange = (value: string) => {
   const filteredRecords = records.value.filter((item: any) => item.name === value)
   props.item.mockParams = filteredRecords[0].id

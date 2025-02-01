@@ -2,11 +2,13 @@
 import { ref, computed } from 'vue';
 import resultCode from './resultCode.vue'
 import { useFormDataStore } from '@/store/modules/formData';
+import { storeToRefs } from 'pinia';
 
 const activeName = ref('first')
 const formDataStore = useFormDataStore()
+const { formData } = storeToRefs(formDataStore)
 const hasData = computed(() => {
-    return formDataStore.formData && Object.keys(formDataStore.formData).length > 0;
+    return formData?.value && Object.keys(formData?.value).length > 0;
 });
 </script>
 <template>
