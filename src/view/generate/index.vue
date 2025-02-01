@@ -22,7 +22,10 @@ const onSubmit = async () => {
     brainPowerShow.value = true
     formStore.updateState({
     ...res.data,
+    mockNum: res.data.mockNum === 0 ? 10 : res.data.mockNum
     });
+    content.value = ""
+    brainPowerShow.value = false
     useMessage.success("导入成功");
   } catch (error: any) {
     useMessage.failed(error);
@@ -107,10 +110,11 @@ const setDisposition = () => {
 };
 
 const getDisposition = () => {
-  const parsedDisposition = JSON.parse(disposition.value);
+  const res = JSON.parse(disposition.value);
   formStore.updateState({
-    ...parsedDisposition,
+    ...res,
   });
+  disposition.value = ''
   dispositionShow.value = false;
   useMessage.success("导入成功")
 };
@@ -135,9 +139,12 @@ const getTabSql = async() => {
   try{
     const sql = tabSql.value
     const res: any = await getGenSchemaBySQL(sql)
+    console.log("res",res.data)
     formStore.updateState({
-      ...res.data
+      ...res.data,
+      mockNum: res.data.mockNum === 0 ? 10 : res.data.mockNum
     })
+    tabSql.value = ""
     sqlShow.value = false;
     useMessage.success("导入成功");
   }catch(error: any){
@@ -152,9 +159,9 @@ const onFileChange = (event: Event) => {
   if (target.files && target.files[0]) {
     getUploadExcelFile(target.files[0])
       .then((response: any) => {
-        const data = response.data;
+        const res = response.data;
         formStore.updateState({
-          ...data,
+          ...res,
         });
         useMessage.success("导入成功");
       })
@@ -187,7 +194,7 @@ const uploadFile = () => {
           <div class="formInfo">
             <!-- into -->
             <div class="into">
-              <button class="brainPower Button" style="border: 1px solid #1890ff; color: #1890ff"
+              <button class="brainPower Button" 
                 @click="brainPowerShow = true">
                 智能导入
               </button>
