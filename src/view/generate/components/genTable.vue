@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import { getTabSql, deleteMyTabPage } from "@/api/modules/table";
 import { useFormStore } from "@/store/modules/formStore";
 import { useMessage } from "@/hook/useMessage";
+import { useLoading } from "@/hook/useLoading";
 
 const formListStore = useFormList();
 const { MyTablePage } = storeToRefs(formListStore);
@@ -31,16 +32,19 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref("");
 
+const loadingInstance = useLoading()
 // 导入 form
 const emit = defineEmits();
 const formStore = useFormStore();
 const setFormData = (content: any) => {
+  loadingInstance.start()
   const res: any= getContent(content);
   formStore.updateState({
     ...res,
   });
   emit('close')
   useMessage.success("导入成功");
+  loadingInstance.close()
 };
 
 // key

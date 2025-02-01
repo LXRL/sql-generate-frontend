@@ -9,6 +9,7 @@ import generateItem from "./generateItem.vue";
 import { cloneDeep } from "lodash";
 import draggable from "vuedraggable";
 import { useMessage } from "@/hook/useMessage";
+import { useLoading } from "@/hook/useLoading";
 
 // Form
 const formStore = useFormStore();
@@ -97,16 +98,19 @@ const universalClick = () => {
   });
 };
 
-
+const loadingInstance = useLoading()
 // submit 提交
 const formDataStore = useFormDataStore();
 const onSubmit = async () => {
+  loadingInstance.start("生成中...");
   try {
     const response: any = await getGenSchema(formStore);
     formDataStore.formData = response.data;
     useMessage.success("已生成");
   } catch (error: any) {
     useMessage.failed(error);
+  } finally {
+    loadingInstance.close()
   }
 };
 
@@ -199,7 +203,7 @@ const fieldsShow = ref<boolean>(false);
 
       <!-- submit -->
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" style="width: 200px">一键生成</el-button>
+        <el-button type="primary" @click="onSubmit()" style="width: 200px">一键生成</el-button>
         <el-button @click="saveContent()">保存表</el-button>
         <el-button @click="disposition()">复制配置</el-button>
         <el-button @click="resetClick()">重置</el-button>

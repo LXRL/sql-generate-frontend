@@ -7,16 +7,18 @@ import { getGenAuto,getUploadExcelFile,getGenSchemaBySQL } from "@/api";
 import generateResult from "./components/generateResult.vue";
 import genTable from "./components/genTable.vue";
 import { useMessage } from "@/hook/useMessage";
-
+import { useLoading } from "@/hook/useLoading";
 // Form
 const formStore = useFormStore();
 
+const loadingInstance = useLoading()
 // brainPower 智能导入
 const content = ref<string>("");
 const brainPowerShow = ref<boolean>(false);
 const setBrain = () =>
   (content.value = "id,用户名,创建时间,更新时间,is_deleted");
 const onSubmit = async () => {
+  loadingInstance.start()
   try {
     const res: any = await getGenAuto(content.value);
     brainPowerShow.value = true
@@ -29,6 +31,8 @@ const onSubmit = async () => {
     useMessage.success("导入成功");
   } catch (error: any) {
     useMessage.failed(error);
+  } finally {
+    loadingInstance.close()
   }
 };
 // tableShow 导入表
@@ -111,15 +115,17 @@ const setDisposition = () => {
 
 const getDisposition = () => {
   const res = JSON.parse(disposition.value);
+  loadingInstance.start()
   formStore.updateState({
     ...res,
   });
   disposition.value = ''
   dispositionShow.value = false;
   useMessage.success("导入成功")
+  loadingInstance.close()
 };
 
-// sqlShow 导入建表Sql
+// sqlShow 导入建表SQL
 const tabSql = ref();
 const sqlShow = ref<boolean>(false);
 const setTabSql = () => {
@@ -136,6 +142,7 @@ is_deleted tinyint default 0 not null comment '是否删除(0-未删, 1-已删)'
 };
 
 const getTabSql = async() => {
+  loadingInstance.start()
   try{
     const sql = tabSql.value
     const res: any = await getGenSchemaBySQL(sql)
@@ -147,8 +154,10 @@ const getTabSql = async() => {
     tabSql.value = ""
     sqlShow.value = false;
     useMessage.success("导入成功");
-  }catch(error: any){
+  } catch (error: any) {
     useMessage.failed(error)
+  } finally {
+    loadingInstance.close()
   }
 };
 
@@ -159,6 +168,7 @@ const onFileChange = (event: Event) => {
   if (target.files && target.files[0]) {
     getUploadExcelFile(target.files[0])
       .then((response: any) => {
+        loadingInstance.start()
         const res = response.data;
         formStore.updateState({
           ...res,
@@ -167,6 +177,9 @@ const onFileChange = (event: Event) => {
       })
       .catch((error: any) => {
         useMessage.failed(error);
+      })
+      .finally (()=>{
+        loadingInstance.close()
       });
   }
 };
