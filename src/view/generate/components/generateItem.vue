@@ -95,6 +95,7 @@ const fieldsContent = (data: any) => {
 const fieldsSubmit = async () => {
   try {
     await AddMyFiePage(fieldsForm);
+    useMessage.success("保存成功")
     fieldsSaveShow.value = false;
   } catch (error: any) {
     useMessage.failed(error.message);
@@ -206,10 +207,8 @@ const dictRefresh = () => {
         </el-form-item>
       </div>
     </el-collapse-item>
-  </el-collapse>
-
-   <!-- 保存字段 -->
-   <el-dialog v-model="fieldsSaveShow" title="保存字段信息(后续可直接导入)" width="520" style="padding: 24px">
+    <!-- 保存字段 -->
+    <el-dialog v-model="fieldsSaveShow" title="保存字段信息(后续可直接导入)" width="520" style="padding: 24px">
       <div class="header" style="margin-bottom: 16px">
         注意,你提交的内容可能会被公开
       </div>
@@ -231,6 +230,8 @@ const dictRefresh = () => {
         </div>
       </template>
     </el-dialog>
+  </el-collapse>
+
 </template>
 
 <style lang="less" scoped>
