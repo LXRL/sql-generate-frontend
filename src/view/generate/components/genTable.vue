@@ -31,15 +31,15 @@ const handlePageChange = (newPage: number) => {
 // search
 const search = ref("");
 
-
-
 // 导入 form
+const emit = defineEmits();
 const formStore = useFormStore();
 const setFormData = (content: any) => {
   const res: any= getContent(content);
   formStore.updateState({
     ...res,
   });
+  emit('close')
   useMessage.success("导入成功");
 };
 

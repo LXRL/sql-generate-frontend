@@ -18,7 +18,11 @@ const setBrain = () =>
   (content.value = "id,用户名,创建时间,更新时间,is_deleted");
 const onSubmit = async () => {
   try {
-    await getGenAuto(content.value);
+    const res: any = await getGenAuto(content.value);
+    brainPowerShow.value = true
+    formStore.updateState({
+    ...res.data,
+    });
     useMessage.success("导入成功");
   } catch (error: any) {
     useMessage.failed(error);
@@ -132,7 +136,7 @@ const getTabSql = async() => {
     const sql = tabSql.value
     const res: any = await getGenSchemaBySQL(sql)
     formStore.updateState({
-      ...res
+      ...res.data
     })
     sqlShow.value = false;
     useMessage.success("导入成功");
@@ -229,8 +233,8 @@ const uploadFile = () => {
           </el-dialog>
 
           <!-- 导入表 -->
-          <el-drawer v-model="tableShow" title="导入表">
-            <genTable></genTable>
+          <el-drawer v-model="tableShow" title="导入表" >
+            <genTable @close="tableShow = false"></genTable>
           </el-drawer>
 
           <!-- 导入配置 -->
