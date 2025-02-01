@@ -172,6 +172,8 @@ const onFileChange = (event: Event) => {
         const res = response.data;
         formStore.updateState({
           ...res,
+          tableName: formStore.tableName === '' ? 'test_table' : formStore.tableName,
+          mockNum: formStore.mockNum === 0 ? 10 : formStore.mockNum,
         });
         useMessage.success("导入成功");
       })

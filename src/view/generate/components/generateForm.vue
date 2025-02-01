@@ -104,7 +104,7 @@ const formDataStore = useFormDataStore();
 const onSubmit = async () => {
   loadingInstance.start("生成中...");
   try {
-    const response: any = await getGenSchema(formStore);
+    const response: any = await getGenSchema(formStore.$state);
     formDataStore.formData = response.data;
     useMessage.success("已生成");
   } catch (error: any) {
@@ -130,7 +130,7 @@ const saveForm = reactive({
 const saveContent = () => {
   if (formStore.fieldList.length > 0) {
     saveShow.value = true;
-    saveForm.content = JSON.stringify(formStore);
+    saveForm.content = JSON.stringify(formStore.$state);
   } else {
     useMessage.failed("至少添加一个字段");
   }
@@ -151,7 +151,7 @@ const reset = () => {
 };
 // 复制配置
 const disposition = async () => {
-  const res: any= JSON.stringify(formStore);
+  const res: any= JSON.stringify(formStore.$state);
   await navigator.clipboard.writeText(res);
   useMessage.success("已复制到剪切板");
 };
