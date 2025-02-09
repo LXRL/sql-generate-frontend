@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import useUserLoginStore from "../view/login/store";
 import { useMessage } from "@/hook/useMessage";
+
 // navigation
 const navList = ref<{ name: string; path: string }[]>([
   {
@@ -22,10 +23,14 @@ const navList = ref<{ name: string; path: string }[]>([
     path: "/fields/all",
   },
 ]);
-// active 样式判断
-const navCurrent = ref<number>(0);
+
 // router.push 切换页面
 const router = useRouter();
+// active 样式判断
+const route = useRoute();
+const isActive = (path: string) =>{
+  return route.path === path
+}
 const navClick = (path: string) => {
   router.push(path);
 };
@@ -65,8 +70,8 @@ const logoutClick = async () => {
       <h4>SQL生成器</h4>
     </div>
     <div class="navigation">
-      <template v-for="(item, index) in navList" :key="index">
-        <div :class="{ active: navCurrent === index }" @click="(navCurrent = index), navClick(item.path)">
+      <template v-for="item in navList" :key="item.id">
+        <div :class="{ active: isActive(item.path) }" @click="navClick(item.path)">
           {{ item.name }}
         </div>
       </template>

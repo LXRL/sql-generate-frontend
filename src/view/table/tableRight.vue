@@ -13,16 +13,16 @@ const { MyTablePage } = storeToRefs(formListStore);
 formListStore.fetchGetMyTabPage();
 
 const tablePageValue: any = computed(()=>MyTablePage?.value)
-const isNull = computed(() => tablePageValue?.value.records?.length > 0);
+const isNull = computed(() => tablePageValue?.value?.records?.length > 0);
 
 // 分页
 const currentPage = ref(1);
 const pageSize = ref(3);
-const totalRecords = computed(() => tablePageValue?.value.records?.length);
+const totalRecords = computed(() => tablePageValue?.value?.records?.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return tablePageValue?.value.records?.slice(start, end);
+  return tablePageValue?.value?.records?.slice(start, end);
 });
 
 // 分页变化处理
@@ -80,7 +80,7 @@ const getCopy = async (id: any) => {
 };
 
 // 删除
-const deleteShow = ref(Array(tablePageValue?.value.records?.length).fill(false));
+const deleteShow = ref(Array(tablePageValue?.value?.records?.length).fill(false));
 const deletePage = async (id: any) => {
   try {
     await deleteMyTabPage(id);
